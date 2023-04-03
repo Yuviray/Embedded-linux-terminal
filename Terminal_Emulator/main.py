@@ -1,23 +1,18 @@
 import os
-from tkinter import *
-
-
+import tkinter as tk
 
 def list_files(startpath):
-
-    print("\nDirectory Tree")
-    text = ""
+    text = "Directory Tree\n"
     for root, dirs, files in os.walk(startpath):
         level = root.replace(startpath, '').count(os.sep)
         indent = ' ' * 4 * (level)
-        print('{}{}/'.format(indent, os.path.basename(root)))
-        #text += '{}{}/'.format(indent, os.path.basename(root))
+        #print('{}{}/'.format(indent, os.path.basename(root)))
+        text += '{}{}/\n'.format(indent, os.path.basename(root))
         subindent = ' ' * 4 * (level + 1)
         for f in files:
-            print('{}{}'.format(subindent, f))
-            #text += '{}{}'.format(subindent, f)
-        #return text
-
+            #print('{}{}'.format(subindent, f))
+            text += '{}{}\n'.format(subindent, f)
+    return text
 
 def ls():
     files = os.listdir(os.getcwd())
@@ -25,7 +20,7 @@ def ls():
         print(file)
 
 
-    list_files(os.getcwd())
+    #list_files(os.getcwd())
 
 def cd(path):
     os.chdir(path)
@@ -37,14 +32,27 @@ def mkfile(file):
 def mkfolder(folder):
     os.mkdir(folder)
 
+
+def tree():
+    root = tk.Tk()
+    text_widget = tk.Text(root)
+    text_widget.pack()
+    text_widget.insert(tk.END, list_files(os.getcwd()))
+    root.mainloop()
+    root.quit()
+
+
 def main():
     while True:
+
         term_input = input(os.getcwd() + "$ ")
 
         # Split the input into command and arguments
         command = term_input.split()
         if command[0] == "ls":
+            tree()
             ls()
+
 
         if command[0] == "cd":
             if len(command) > 1:
