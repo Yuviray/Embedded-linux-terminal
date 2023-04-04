@@ -16,7 +16,8 @@ def cd(path):
     current_path = getPathText()
 
     try:
-        os.chdir(current_path[:-2] + "\\" + path)
+        #os.chdir(current_path[:-2] + "\\" + path)
+        os.chdir(path)
     except:
         print("Error: Please enter a valid path.")
 
