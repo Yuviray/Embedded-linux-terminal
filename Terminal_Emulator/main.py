@@ -41,40 +41,47 @@ def tree():
     root.mainloop()
     root.quit()
 
+def terminalGUI():
+    root = tk.Tk()
+    root.geometry('100x100')
+    root.mainloop()
+    root.quit()
 
 def main():
     while True:
+        terminalGUI()
 
-        term_input = input(os.getcwd() + "$ ")
+        
+        # term_input = input(os.getcwd() + "$ ")
 
-        # Split the input into command and arguments
-        command = term_input.split()
-        if command[0] == "ls":
-            tree()
-            ls()
+        # # Split the input into command and arguments
+        # command = term_input.split()
+        # if command[0] == "ls":
+        #     tree()
+        #     ls()
 
 
-        if command[0] == "cd":
-            if len(command) > 1:
-                cd(command[1])
+        # if command[0] == "cd":
+        #     if len(command) > 1:
+        #         cd(command[1])
 
-            else:
-                print("Error: Please specify a path.")
-        if command[0] == "cat":
-            if len(command) > 1:
-                mkfile(command[2])
+        #     else:
+        #         print("Error: Please specify a path.")
+        # if command[0] == "cat":
+        #     if len(command) > 1:
+        #         mkfile(command[2])
 
-            else:
-                print("Error: Please specify a path.")
+        #     else:
+        #         print("Error: Please specify a path.")
 
-        if command[0] == "mkdir":
-            if len(command) > 1:
-                mkfolder(command[1])
+        # if command[0] == "mkdir":
+        #     if len(command) > 1:
+        #         mkfolder(command[1])
 
-            else:
-                print("Error: Please specify a path.")
-        else:
-            os.system(term_input)
+        #     else:
+        #         print("Error: Please specify a path.")
+        # else:
+        #     os.system(term_input)
 
 
 
