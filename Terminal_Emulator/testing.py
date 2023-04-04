@@ -23,6 +23,18 @@ def cd(path):
 def ls():
     return os.listdir(os.getcwd())
 
+def cat(file_name):
+    try:
+        new_file = open(file_name,'w')
+        new_file.close()
+    except:
+        print("Error: Please enter a valid file name.")
+
+def mkdir(dir_name):
+    try:
+        os.mkdir(dir_name)
+    except:
+        print("Error: Please enter a valid directory name.")
 
 def getPathText():
     current_folder = os.getcwd()
@@ -45,12 +57,23 @@ def callCommand(user_input, font, screen):
         files = ls()
         i = len(prev_lines)
         for file in files:
-            #ls_text = str(file)
-            #print(ls_text)
             next_y += font.get_height() + 8
             prev_lines.append(str(file))
             i+=1
-        
+
+    elif command[0] == "cat":
+        if len(command) > 1:
+            cat(command[1])
+
+        else:
+            print("Error: Please specify a file name.")
+
+    if command[0] == "mkdir":
+        if len(command) > 1:
+            mkdir(command[1])
+
+        else:
+            print("Error: Please specify a directory name.")
 
 def main():
     global background_color,text_color, cursor_color, font_size, screen_width,\
