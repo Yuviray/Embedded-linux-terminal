@@ -15,7 +15,7 @@ prev_lines = []
 
 def cd(path):
     current_path = getPathText()
-    os.chdir(current_path[:-2] + "\\" + path)
+    os.chdir(current_path[:-2] + "/" + path)
 
 def ls():
     return os.listdir(os.getcwd())
@@ -92,7 +92,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Psuedo Terminal")
-    font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', font_size)
+    font = pygame.font.Font('Terminal_Emulator/fonts/UbuntuMono-Regular.ttf', font_size)
 
     # Define path box
     current_path = getPathText()
