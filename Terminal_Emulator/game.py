@@ -13,9 +13,7 @@ screen_height = 500
 active = True # can set false if user should click before typing
 next_y = 0
 max_lines = 300
-prev_lines = []
-
-            
+prev_lines = []        
     
 def callCommand(user_input, font, screen):
     global text_color, prev_lines, max_lines, next_y
@@ -174,9 +172,8 @@ def main():
     sub_surface.fill((255, 255, 255))  # Fill with white background color
 
     #Draw some text on the sub surface
-    sub_font = pygame.font.Font(None, 16)
-    directory_text = list_files(os.getcwd())
-    sub_text = sub_font.render(directory_text, True, (0, 0, 0))
+    sub_font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', font_size)
+   
 
     while True:
         # Handle events
@@ -212,11 +209,6 @@ def main():
 
                         # Update the display to show the changes
                         pygame.display.flip()
-
-                        
-                        
-
-
 
             elif event.type == pygame.KEYDOWN:
                 # Check if the user typed a key and clicked on the window
@@ -292,8 +284,14 @@ def main():
         screen.blit(hello_label, hello_rect.center)
         
         if over >0:
-            sub_surface.blit(sub_text, (20, 20))
-            # Blit the sub surface and overlay surface onto the main surface
+            sub_surface.fill((255, 255, 255))
+            directory_text = list_files(os.getcwd())    
+            lines = directory_text.split('\n')
+            y = 20 
+            for line in lines:
+                sub_text = sub_font.render(line, True, (0, 0, 0))
+                sub_surface.blit(sub_text, (20, y))
+                y += 20 # Increment y-coordinate for the next line of text
             screen.blit(sub_surface, (1000, 0))
             
         # Update the display

@@ -39,17 +39,14 @@ def getPathText():
     current_folder = os.getcwd()
     return current_folder + "> "
 
-def list_files(directory):
-    text = ''
-    for item in os.listdir(directory):
-        full_path = os.path.join(directory, item)
-        if os.path.isfile(full_path):
-            text += '- {}\n'.format(item)
-        elif os.path.isdir(full_path):
-            text += '+ {}/\n'.format(item)
-            subtext = list_files(full_path)
-            sublines = subtext.strip().split('\n')
-            sublines = ['    ' + line for line in sublines]
-            text += '\n'.join(sublines) + '\n'
+def list_files(startpath):
+    text = "Directory Tree\n"
+    for root, dirs, files in os.walk(startpath):
+        level = root.replace(startpath, '').count(os.sep)
+        indent = ' ' * 4 * (level)
+        text += '{}{}/\n'.format(indent, os.path.basename(root))
+        subindent = ' ' * 4 * (level + 1)
+        for f in files:
+            text += '{}{}\n'.format(subindent, f)
     return text
 
