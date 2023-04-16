@@ -2,6 +2,7 @@ import pygame
 import os
 import time
 import shutil
+from functions import*
 
 background_color = (0, 0, 0)
 text_color = (255, 255, 255)
@@ -14,45 +15,8 @@ next_y = 0
 max_lines = 300
 prev_lines = []
 
-def cd(path):
-    current_path = getPathText()
-    os.chdir(current_path[:-2] + "/" + path)
-
-def ls():
-    return os.listdir(os.getcwd())
-
-def cat(file_name):
-    new_file = open(file_name,'w')
-    new_file.close()
-
-def mkdir(dir_name):
-    os.mkdir(dir_name)
-
-def rm(file_name):
-    os.remove(file_name)
-
-def rmdir(dir_name):
-    os.rmdir(dir_name)
-
-def pwd():
-    return os.getcwd()
-
-def mv(src, dst):
-    shutil.move(src, dst)
-
-def cp(src, dst):
-    dst_dir = os.path.dirname(dst)
-    if not os.path.exists(dst_dir):
-        os.makedirs(dst_dir)
-    shutil.copy(src, dst)
-
-
-def getPathText():
-    current_folder = os.getcwd()
-    return current_folder + "> "
-
-
-
+            
+    
 def callCommand(user_input, font, screen):
     global text_color, prev_lines, max_lines, next_y
     command = user_input.split()
@@ -161,9 +125,11 @@ def callCommand(user_input, font, screen):
         else:
             prev_lines.append("Error: Please specify a file source.")
             next_y += font.get_height() + 8
-            
+#def displayTree():
     
-            
+    
+
+  
 
 def main():
     global background_color, text_color, cursor_color, font_size, screen_width, \
@@ -195,14 +161,27 @@ def main():
     path_history = []
     max_history_length = 50
     history_index = 0
+    over = 0
 
-    # Define clear button
-    button_rect = pygame.Rect(10, screen_height - 40, 80, 30)
-    button_label = font.render("Clear", True, text_color)
+    # Define hello button
+    hello_rect = pygame.Rect(900, screen_height - 40, 80, 30)
+    hello_label = font.render("Hello", True, text_color)
+    
+    sub_surface_width = 300
+    sub_surface_height = screen_height
+    
+    sub_surface = pygame.Surface((sub_surface_width, sub_surface_height))
+    sub_surface.fill((255, 255, 255))  # Fill with white background color
+
+    #Draw some text on the sub surface
+    sub_font = pygame.font.Font(None, 16)
+    directory_text = list_files(os.getcwd())
+    sub_text = sub_font.render(directory_text, True, (0, 0, 0))
 
     while True:
         # Handle events
         current_path = getPathText()
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -216,9 +195,28 @@ def main():
                     active = False
 
                 # Check if the user clicked on the clear button
-                if button_rect.collidepoint(event.pos):
-                    prev_lines.clear()
-                    next_y = 30
+                if hello_rect.collidepoint(event.pos):
+                    if screen_width == 1000:
+                         # Create a new surface to render Pygame in
+                        screen_width += sub_surface_width
+                        screen = pygame.display.set_mode((screen_width, screen_height))
+                        over+=1
+
+                    elif screen_width == 1300:
+                        screen_width -= sub_surface_width
+                        screen = pygame.display.set_mode((screen_width, screen_height))
+                        over-=1
+
+                        # Remove the sub surface by redrawing the main surface over it
+                        screen.fill(background_color)
+
+                        # Update the display to show the changes
+                        pygame.display.flip()
+
+                        
+                        
+
+
 
             elif event.type == pygame.KEYDOWN:
                 # Check if the user typed a key and clicked on the window
@@ -266,9 +264,9 @@ def main():
 
         # Update the path text
         current_path = getPathText()
-
         # Draw the terminal background
         screen.fill(background_color)
+        
 
         # Draw the previous commands
         for i in range(len(prev_lines)):
@@ -288,8 +286,17 @@ def main():
             if cursor_visible:
                 cursor_pos = text_surface.get_width() + 8
                 screen.blit(cursor_surface, (cursor_pos, next_y))
-
+        
+        
+        pygame.draw.rect(screen,(0, 0, 255), hello_rect)
+        screen.blit(hello_label, hello_rect.center)
+        
+        if over >0:
+            sub_surface.blit(sub_text, (20, 20))
+            # Blit the sub surface and overlay surface onto the main surface
+            screen.blit(sub_surface, (1000, 0))
+            
         # Update the display
         pygame.display.update()
 
-#main()
+main()

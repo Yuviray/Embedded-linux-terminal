@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 from testing import*
+from functions import*
 import shutil
 
 class TestCommandLine(unittest.TestCase):
