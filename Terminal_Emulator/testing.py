@@ -1,6 +1,7 @@
 import pygame
 import os
 import time
+import shutil
 
 background_color = (0, 0, 0)
 text_color = (255, 255, 255)
@@ -27,9 +28,30 @@ def cat(file_name):
 def mkdir(dir_name):
     os.mkdir(dir_name)
 
+def rm(file_name):
+    os.remove(file_name)
+
+def rmdir(dir_name):
+    os.rmdir(dir_name)
+
+def pwd():
+    return os.getcwd()
+
+def mv(src, dst):
+    shutil.move(src, dst)
+
+def cp(src, dst):
+    dst_dir = os.path.dirname(dst)
+    if not os.path.exists(dst_dir):
+        os.makedirs(dst_dir)
+    shutil.copy(src, dst)
+
+
 def getPathText():
     current_folder = os.getcwd()
     return current_folder + "> "
+
+
 
 def callCommand(user_input, font, screen):
     global text_color, prev_lines, max_lines, next_y
@@ -40,7 +62,7 @@ def callCommand(user_input, font, screen):
         return
     
     # Check if the user enters a valid command, if not just reset
-    elif command[0] == "cd":
+    if command[0] == "cd":
         if len(command) > 1:
             try:    
                 cd(command[1])
@@ -73,7 +95,7 @@ def callCommand(user_input, font, screen):
             prev_lines.append("Error: Please specify a file name.")
             next_y += font.get_height() + 8
 
-    if command[0] == "mkdir":
+    elif command[0] == "mkdir":
         if len(command) > 1:
             try:
                 mkdir(command[1])
@@ -83,16 +105,75 @@ def callCommand(user_input, font, screen):
         else:
             prev_lines.append("Error: Please specify a directory name.")
             next_y += font.get_height() + 8
+            
+    elif command[0] == "rm":
+        if len(command) > 1:
+            try:
+                rm(command[1])
+            except:
+                prev_lines.append("Error: Please enter a valid file name.")
+                next_y += font.get_height() + 8
+
+        else:
+            prev_lines.append("Error: Please specify a file name.")
+            next_y += font.get_height() + 8
+            
+    elif command[0] == "rmdir":
+        if len(command) > 1:
+            try:
+                rmdir(command[1])
+            except:
+                prev_lines.append("Error: Please enter a valid directory name.")
+                next_y += font.get_height() + 8
+        else:
+            prev_lines.append("Error: Please specify a directory name.")
+            next_y += font.get_height() + 8
+            
+    elif command[0] == "pwd":
+        if len(command) > 1:
+            prev_lines.append("pwd: too many arguments")
+            next_y += font.get_height() + 8
+        else:
+            pwd()
+            
+    elif command[0] == "mv":
+        if len(command) > 1:
+            if len(command) < 3:
+                try:
+                    mv(command[1], command[2])
+                except:
+                    prev_lines.append("Error: Please enter a valid file name.")
+                    next_y += font.get_height() + 8
+
+        else:
+            prev_lines.append("Error: Please specify a file source.")
+            next_y += font.get_height() + 8
+            
+    elif command[0] == "cp":
+        if len(command) > 1:
+            if len(command) < 3:
+                try:
+                    cp(command[1], command[2])
+                except:
+                    prev_lines.append("Error: Please enter a valid file name.")
+                    next_y += font.get_height() + 8
+
+        else:
+            prev_lines.append("Error: Please specify a file source.")
+            next_y += font.get_height() + 8
+            
+    
+            
 
 def main():
-    global background_color,text_color, cursor_color, font_size, screen_width,\
-    screen_height, active, next_y, prev_lines, max_lines
+    global background_color, text_color, cursor_color, font_size, screen_width, \
+        screen_height, active, next_y, prev_lines, max_lines
 
     # Initialize Pygame
     pygame.init()
     screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption("Psuedo Terminal")
-    font = pygame.font.Font('Terminal_Emulator/fonts/UbuntuMono-Regular.ttf', font_size)
+    pygame.display.set_caption("Pseudo Terminal")
+    font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', font_size)
 
     # Define path box
     current_path = getPathText()
@@ -102,7 +183,7 @@ def main():
     # Define text input box
     input_box = pygame.Rect(0, 0, screen_width, screen_height)
     input_text = ""
-    
+
     # Define cursor variables
     cursor_surface = font.render("|", True, cursor_color)
     cursor_visible = True
@@ -114,6 +195,10 @@ def main():
     path_history = []
     max_history_length = 50
     history_index = 0
+
+    # Define clear button
+    button_rect = pygame.Rect(10, screen_height - 40, 80, 30)
+    button_label = font.render("Clear", True, text_color)
 
     while True:
         # Handle events
@@ -129,6 +214,11 @@ def main():
                     active = True
                 else:
                     active = False
+
+                # Check if the user clicked on the clear button
+                if button_rect.collidepoint(event.pos):
+                    prev_lines.clear()
+                    next_y = 30
 
             elif event.type == pygame.KEYDOWN:
                 # Check if the user typed a key and clicked on the window
@@ -202,4 +292,4 @@ def main():
         # Update the display
         pygame.display.update()
 
-main()
+#main()
