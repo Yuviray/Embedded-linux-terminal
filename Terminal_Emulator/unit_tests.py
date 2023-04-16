@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from testing import*
+from game import*
 from functions import*
 import shutil
 
