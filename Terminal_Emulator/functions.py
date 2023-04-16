@@ -40,7 +40,7 @@ def getPathText():
     return current_folder + "> "
 
 def list_files(startpath):
-    text = "Directory Tree\n"
+    text = "Directory Tree\n\n"
     for root, dirs, files in os.walk(startpath):
         level = root.replace(startpath, '').count(os.sep)
         indent = ' ' * 4 * (level)

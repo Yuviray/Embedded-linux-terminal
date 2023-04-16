@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cc485255-c390-4e20-95af-cc7a3908cf0c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Terminal_Emulator/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Terminal_Emulator/testing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Terminal_Emulator/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/Terminal_Emulator/functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Terminal_Emulator/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Terminal_Emulator/game.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,6 +70,7 @@
       <workItem from="1680638955357" duration="95000" />
       <workItem from="1681538678950" duration="1142000" />
       <workItem from="1681580660293" duration="160000" />
+      <workItem from="1681662972175" duration="98000" />
     </task>
     <task id="LOCAL-00001" summary="fixed cd to enter directory now">
       <created>1680639038488</created>

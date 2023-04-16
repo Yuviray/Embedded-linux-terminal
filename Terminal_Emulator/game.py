@@ -3,13 +3,17 @@ import os
 import time
 import shutil
 from functions import*
+import pygame_gui
+from pygame_gui.elements import UIButton
+from pygame_gui.windows import UIColourPickerDialog
+import sys
 
 background_color = (0, 0, 0)
 text_color = (255, 255, 255)
 cursor_color = (255, 255, 255)
 font_size = 16
 screen_width = 1000
-screen_height = 500
+screen_height = 700
 active = True # can set false if user should click before typing
 next_y = 0
 max_lines = 300
@@ -160,29 +164,102 @@ def main():
     max_history_length = 50
     history_index = 0
     over = 0
+    overlay = 0
 
     # Define hello button
-    hello_rect = pygame.Rect(900, screen_height - 40, 80, 30)
-    hello_label = font.render("Hello", True, text_color)
+    tree_rect = pygame.Rect(900, screen_height - 60, 40, 40)
+    tree_image = pygame.image.load("img/folder.png")
+    tree_image = pygame.transform.scale(tree_image, (tree_rect.width, tree_rect.height))
+    
+    
+    settings_rect = pygame.Rect(800, screen_height - 60, 40,40 )
+    settings_image = pygame.image.load("img/settings.png")
+    settings_image = pygame.transform.scale(settings_image, (settings_rect.width, settings_rect.height))
+    #settings_label = font.render("setting", True, text_color)
     
     sub_surface_width = 300
     sub_surface_height = screen_height
-    
+
     sub_surface = pygame.Surface((sub_surface_width, sub_surface_height))
-    sub_surface.fill((255, 255, 255))  # Fill with white background color
+    #sub_surface.fill((255, 255, 255))  # Fill with white background color
+    
+    overlay_surface = pygame.Surface((screen_width, screen_height))
+    overlay_surface.fill((255, 255, 255))
+    overlay_surface.set_alpha(100)  # Set alpha value to make it semi-transparent
+
+        # Blit the sub surface and overlay surface onto the main surface
+    screen.blit(overlay_surface, (0, 0))
 
     #Draw some text on the sub surface
     sub_font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', font_size)
-   
+    
+    ui_manager = pygame_gui.UIManager((800, 600))
+    #custom overlay color
+    colour_picker_button_overlay = UIButton(relative_rect=pygame.Rect(-780, -560, 180, 30),
+                                text='Pick Overlay Colour',
+                                manager=ui_manager,
+                                anchors={'left': 'right',
+                                        'right': 'right',
+                                        'top': 'bottom',
+                                        'bottom': 'bottom'})
+    colour_picker = None                                    
+    overlay_colour = pygame.Color(0, 0, 0)
+    
+    #custom background color
+    colour_picker_button_background = UIButton(relative_rect=pygame.Rect(-780, -530, 180, 30),
+                                text='Pick Background Colour',
+                                manager=ui_manager,
+                                anchors={'left': 'right',
+                                        'right': 'right',
+                                        'top': 'bottom',
+                                        'bottom': 'bottom'})
+    colour_picker2 = None           
+                             
+    background_colour = pygame.Color(0, 0, 0)
+    
+
+    clock = pygame.time.Clock()
+
 
     while True:
         # Handle events
+        time_delta = clock.tick(60) / 1000
         current_path = getPathText()
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+                
+                
+            if event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == colour_picker_button_overlay:
+                colour_picker = UIColourPickerDialog(pygame.Rect(160, 50, 420, 400),
+                                                ui_manager,
+                                                window_title="Change Colour...",
+                                                initial_colour=overlay_colour)
+                colour_picker_button_overlay.disable()
+            if event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED:
+                overlay_colour = event.colour
+                overlay_surface.fill(overlay_colour)
+            if event.type == pygame_gui.UI_WINDOW_CLOSE:
+                colour_picker_button_overlay.enable()
+                colour_picker = None
+                
+                
+            if event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == colour_picker_button_background:
+                colour_picker2 = UIColourPickerDialog(pygame.Rect(160, 50, 420, 400),
+                                                ui_manager,
+                                                window_title="Change Colour...",
+                                                initial_colour=background_color)
+                colour_picker_button_background.disable()
+            if event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED:
+                background_colour = event.colour
+                screen.fill(background_colour)
+            if event.type == pygame_gui.UI_WINDOW_CLOSE:
+                colour_picker_button_background.enable()
+                colour_picker2 = None
+        
+            
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # Check if the user clicked on the input box
@@ -192,7 +269,7 @@ def main():
                     active = False
 
                 # Check if the user clicked on the clear button
-                if hello_rect.collidepoint(event.pos):
+                if tree_rect.collidepoint(event.pos):
                     if screen_width == 1000:
                          # Create a new surface to render Pygame in
                         screen_width += sub_surface_width
@@ -209,6 +286,13 @@ def main():
 
                         # Update the display to show the changes
                         pygame.display.flip()
+                if settings_rect.collidepoint(event.pos):
+                    if overlay == 0:
+                        overlay+=1
+
+                    else:
+                        overlay-=1
+    
 
             elif event.type == pygame.KEYDOWN:
                 # Check if the user typed a key and clicked on the window
@@ -253,6 +337,7 @@ def main():
 
                     else:
                         input_text += event.unicode  
+            ui_manager.process_events(event)
 
         # Update the path text
         current_path = getPathText()
@@ -278,21 +363,31 @@ def main():
             if cursor_visible:
                 cursor_pos = text_surface.get_width() + 8
                 screen.blit(cursor_surface, (cursor_pos, next_y))
+                
+                
+        #pygame.draw.rect(screen,(0, 0, 255), settings_rect)
+        screen.blit(settings_image, settings_rect.center)
+    
+        screen.blit(tree_image, tree_rect.center)
         
         
-        pygame.draw.rect(screen,(0, 0, 255), hello_rect)
-        screen.blit(hello_label, hello_rect.center)
         
         if over >0:
-            sub_surface.fill((255, 255, 255))
+            #sub_surface.fill((255, 255, 255))
+            sub_surface.fill(background_color)
             directory_text = list_files(os.getcwd())    
             lines = directory_text.split('\n')
             y = 20 
             for line in lines:
-                sub_text = sub_font.render(line, True, (0, 0, 0))
+                sub_text = sub_font.render(line, True, (57, 255, 20))
                 sub_surface.blit(sub_text, (20, y))
                 y += 20 # Increment y-coordinate for the next line of text
             screen.blit(sub_surface, (1000, 0))
+            
+        if overlay >0:
+            screen.blit(overlay_surface, (0, 0))
+            ui_manager.update(time_delta)
+            ui_manager.draw_ui(screen)
             
         # Update the display
         pygame.display.update()
