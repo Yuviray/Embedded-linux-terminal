@@ -47,9 +47,9 @@ def terminalGUI():
     root.mainloop()
     root.quit()
 
-def main():
-    while True:
-        terminalGUI()
+# def main():
+#     while True:
+#         terminalGUI()
 
         
         # term_input = input(os.getcwd() + "$ ")
@@ -86,5 +86,5 @@ def main():
 
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
