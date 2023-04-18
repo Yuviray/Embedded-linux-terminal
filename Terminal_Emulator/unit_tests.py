@@ -3,6 +3,9 @@ from unittest.mock import patch
 from game import*
 from functions import*
 import shutil
+from unittest.mock import patch
+from io import StringIO
+
 
 class TestCommandLine(unittest.TestCase):
     def test_cd_command_with_valid_path(self):
@@ -82,6 +85,48 @@ class TestCommandLine(unittest.TestCase):
         
     def test_getPathText(self):
         self.assertIsInstance(getPathText(), str)
+        
+    def test_touch(self):
+        file_name = 'test_file.txt'
+        touch(file_name)
+        self.assertTrue(os.path.exists(file_name))
+        os.remove(file_name)
+        
+    def test_chmod(self):
+        file_name = 'test_file.txt'
+        touch(file_name)
+        with open(file_name, 'w') as file:
+            file.write('test data')
+        chmod(0o644, file_name)
+        self.assertEqual(os.stat(file_name).st_mode & 0o777, 0o644)
+        os.remove(file_name)
+        
+    def test_chown(self):
+        file_name = 'test_file.txt'
+        touch(file_name)
+        with open(file_name, 'w') as file:
+            file.write('test data')
+        chown(1000, file_name)
+        self.assertEqual(os.stat(file_name).st_uid, 1000)
+        os.remove(file_name)
+        
+    def test_grep(self):
+        file_name = 'test_file.txt'
+        touch(file_name)
+        with open(file_name, 'w') as file:
+            file.write('line1\nline2\nline3\nline4\nline5')
+        matching_lines = grep('line', file_name)
+        self.assertEqual(matching_lines, ['line1\n', 'line2\n', 'line3\n', 'line4\n', 'line5'])
+        os.remove(file_name)
+        
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_df(self, mock_stdout):
+        df()
+        self.assertIn('Filesystem', mock_stdout.getvalue())
+        self.assertIn('1K-blocks', mock_stdout.getvalue())
+        self.assertIn('Used', mock_stdout.getvalue())
+        self.assertIn('Available', mock_stdout.getvalue())
+
     
 if __name__ == '__main__':
     unittest.main()

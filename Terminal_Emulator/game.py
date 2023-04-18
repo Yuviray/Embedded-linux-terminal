@@ -127,6 +127,85 @@ def callCommand(user_input, font, screen):
         else:
             prev_lines.append("Error: Please specify a file source.")
             next_y += font.get_height() + 8
+            
+    elif command[0] == "touch":
+        if len(command) > 1:
+            try:
+                touch(command[1])
+            except:
+                prev_lines.append("Error: Please enter a valid file name.")
+                next_y += font.get_height() + 8
+
+        else:
+            prev_lines.append("Error: Please specify a file name.")
+            next_y += font.get_height() + 8
+            
+    elif command[0] == "chmod":
+        if len(command) > 1:
+            if len(command) < 3:
+                try:
+                    chmod(command[1], command[2])
+                except:
+                    prev_lines.append("Error: Please enter a valid file name.")
+                    next_y += font.get_height() + 8
+
+        else:
+            prev_lines.append("Error: Please specify a file ")
+            next_y += font.get_height() + 8
+            
+    elif command[0] == "chown":
+        if len(command) > 1:
+            if len(command) < 3:
+                try:
+                    chown(command[1], command[2])
+                except:
+                    prev_lines.append("Error: Please enter a valid file name.")
+                    next_y += font.get_height() + 8
+
+        else:
+            prev_lines.append("Error: Please specify a file ")
+            next_y += font.get_height() + 8
+            
+    elif command[0] == "grep":
+        if len(command) > 1:
+            if len(command) < 3:
+                try:
+                    grep(command[1], command[2])
+                except:
+                    prev_lines.append("Error: Please enter a valid file name.")
+                    next_y += font.get_height() + 8
+
+        else:
+            prev_lines.append("Error: Please specify a file ")
+            next_y += font.get_height() + 8
+    
+    elif command[0] == "head":
+        if len(command) > 1:
+            if len(command) > 2 :
+                try:
+                    head(command[1], command[2])
+                except:
+                    prev_lines.append("Error: Please enter a valid file name.")
+                    next_y += font.get_height() + 8
+            else:
+                head(command[1], 10)
+        else:
+            prev_lines.append("Error: Please specify a file ")
+            next_y += font.get_height() + 8
+            
+    elif command[0] == "df":
+        df()
+        
+    elif command[0] == "wget ":
+        if len(command) > 1:
+            try:
+                rmdir(command[1])
+            except:
+                prev_lines.append("Error: Please enter a valid link")
+                next_y += font.get_height() + 8
+        else:
+            prev_lines.append("Error: Please specify a link.")
+            next_y += font.get_height() + 8
 #def displayTree():
     
     
@@ -395,4 +474,4 @@ def main():
         # Update the display
         pygame.display.update()
 
-main()
+#main()
