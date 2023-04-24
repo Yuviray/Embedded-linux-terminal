@@ -14,6 +14,7 @@ line_spacing = 8
 next_y = 0
 font_size = 16
 font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', font_size)
+master_folder_change = True
 
 def appendTerminalText(text_to_add):
     global line_spacing, prev_lines, next_y, font
@@ -22,6 +23,8 @@ def appendTerminalText(text_to_add):
 
 
 def callCommand(user_input):
+    global master_folder_change, prev_lines
+
     command = user_input.split()
 
     # if user does not enter anything
@@ -33,6 +36,7 @@ def callCommand(user_input):
         if len(command) == 2:
             try:    
                 cd(command[1])
+                master_folder_change = True
             except:
                 appendTerminalText("Error: Please enter a valid path.")
         else:
@@ -192,7 +196,7 @@ def main():
     # |                                   | 400w x 100h |
     # |___________________________________|_____________|  
 
-    global font_size, next_y, prev_lines, max_lines, line_spacing
+    global font_size, next_y, prev_lines, max_lines, line_spacing, master_folder_change
 
     # Define terminal window variables
     terminal_width = 900
@@ -200,14 +204,17 @@ def main():
     terminal_background_color = pygame.Color(0, 0, 0)
     terminal_text_color = pygame.Color(255, 255, 255)
     cursor_color = pygame.Color(255, 255, 255)
-    active = True # can set false if user should click before typing
+    terminal_active = True # can set false if user should click before typing
     terminal_window = pygame.Surface((terminal_width, terminal_height))
 
     # Define working tree window variables
+    directory_lines = [] 
     working_tree_width = 400
     working_tree_height = 500
     working_tree_background_color = pygame.Color(8,1,20)
     working_tree_text_color = terminal_text_color
+    working_tree_active = False
+    working_tree_box = pygame.Rect(terminal_width, 0, working_tree_width, working_tree_height)
     working_tree_window = pygame.Surface((working_tree_width, working_tree_height))
 
     # Define options window variables
@@ -252,6 +259,14 @@ def main():
     terminal_scrollbar_height = 35
     terminal_scrollbar_x = terminal_width - terminal_scrollbar_width
     terminal_scrollbar_y = 0
+
+    # Define working tree scrollbar variable
+    working_tree_max_rows = working_tree_height // (font.get_height() + line_spacing)
+    working_tree_scroll_position = 0
+    working_tree_scrollbar_width = 20
+    working_tree_scrollbar_height = 35
+    working_tree_scrollbar_x = working_tree_width - working_tree_scrollbar_width
+    working_tree_scrollbar_y = 0
 
     # Define command history
     command_history = []
@@ -298,9 +313,14 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # If the user clicked on the input box
                 if input_box.collidepoint(event.pos):
-                    active = True
+                    terminal_active = True
                 else:
-                    active = False
+                    terminal_active = False
+                
+                if working_tree_box.collidepoint(event.pos):
+                    working_tree_active = True
+                else:
+                    working_tree_active = False
 
                 # If the user clicked on settings button and the settings aren't up yet
                 if settings_button_rect.collidepoint(event.pos) and overlay == 0:
@@ -310,11 +330,18 @@ def main():
                 elif settings_button_rect.collidepoint(event.pos) and overlay == 1:
                     overlay = 0
 
-                elif event.button == 4 and len(prev_lines) > terminal_max_rows:
+                elif event.button == 4 and len(prev_lines) > terminal_max_rows and terminal_active:
                     terminal_scroll_position = max(0, terminal_scroll_position - 1)
                 
-                elif event.button == 5 and len(prev_lines) > terminal_max_rows:
+                elif event.button == 5 and len(prev_lines) > terminal_max_rows and terminal_active:
                     terminal_scroll_position = min(len(prev_lines) - terminal_max_rows, terminal_scroll_position + 1)
+
+                
+                elif event.button == 4 and len(directory_lines) > working_tree_max_rows and working_tree_active:
+                    working_tree_scroll_position = max(0, working_tree_scroll_position - 1)
+                
+                elif event.button == 5 and len(directory_lines) > working_tree_max_rows and working_tree_active:
+                    working_tree_scroll_position = min(len(directory_lines) - working_tree_max_rows, working_tree_scroll_position + 1)
 
 
             # If the user entered a key
@@ -322,7 +349,7 @@ def main():
                 if len(prev_lines) > terminal_max_rows:
                     terminal_scroll_position = len(prev_lines) - terminal_max_rows
                 # If the user has clicked onto the terminal window
-                if active:
+                if terminal_active:
                     # If user hits 'enter' key
                     if event.key == pygame.K_RETURN:
                         # Update command history
@@ -431,13 +458,27 @@ def main():
             background_color_picker_button.disable()
             text_color_picker_button.disable()
             working_tree_window.fill(working_tree_background_color)
-            directory_text = list_files(os.getcwd())    
-            lines = directory_text.split('\n')
-            y = 20 
-            for line in lines:
-                tree_text = sub_font.render(line, True, working_tree_text_color)
-                working_tree_window.blit(tree_text, (20, y))
-                y += 2 * line_spacing # Increment y-coordinate for the next line of text
+
+            # Draw working tree scroll bar if nec. 
+            if (len(directory_lines) > working_tree_max_rows):
+                working_tree_scrollbar_y = int(working_tree_height*((working_tree_scroll_position) / (len(directory_lines) - working_tree_max_rows)))
+                if (working_tree_scroll_position == (len(directory_lines) - working_tree_max_rows)):
+                    working_tree_scrollbar_y = working_tree_height - working_tree_scrollbar_height
+                pygame.draw.rect(working_tree_window, (20, 120, 220), (working_tree_scrollbar_x, working_tree_scrollbar_y, working_tree_scrollbar_width, working_tree_scrollbar_height))
+            
+            if master_folder_change:
+                directory_lines.clear()
+                directory_text = list_files(os.getcwd()) 
+                lines = directory_text.split('\n')
+                master_folder_change = False
+            
+                for line in lines:
+                    directory_lines.append(line)
+
+            for i in range(working_tree_scroll_position, min(len(directory_lines), working_tree_scroll_position + working_tree_max_rows)):
+                tree_text = sub_font.render(directory_lines[i], True, working_tree_text_color)
+                y = (i - working_tree_scroll_position) * (sub_font.get_height() + line_spacing)
+                working_tree_window.blit(tree_text, (10, y))
 
             # Draw current directory
             screen.blit(working_tree_window, (terminal_width, 0))
@@ -452,7 +493,7 @@ def main():
         current_path = getPathText()
         #terminal_window.blit(path_surface, (10, 10))
 
-        # Draw Scroll bar
+        # Draw Terminal Scroll bar
         if (len(prev_lines) > terminal_max_rows):
             terminal_scrollbar_y = int(terminal_height*((terminal_scroll_position) / (len(prev_lines) - terminal_max_rows)))
             if (terminal_scroll_position == (len(prev_lines) - terminal_max_rows)):
@@ -465,6 +506,7 @@ def main():
         if len(prev_lines) == 0:
             terminal_window.blit(text_surface, (10, 0))
 
+        ########## TODO: FIX BUG WITH SCROLL HERE!!!
         elif len(prev_lines) > terminal_max_rows:
             terminal_window.blit(text_surface, (10, terminal_height - font.get_height() - line_spacing))
 
@@ -485,7 +527,7 @@ def main():
 
 
         # If the user has clicked onto the terminal
-        if active:
+        if terminal_active:
             # Adjust cursor visibility
             if pygame.time.get_ticks() - cursor_blink_timer > cursor_blink_time:
                 cursor_blink_timer = pygame.time.get_ticks()
