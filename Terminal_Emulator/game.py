@@ -201,10 +201,6 @@ class CommandHandler:
             else:
                 appendTerminalText("Error: Please specify a link.")
 
-
-
-
-
 class Terminal:
     def __init__(self):
 
@@ -216,10 +212,51 @@ class Terminal:
         self.cursor_color = pygame.Color(255, 255, 255)
         self.terminal_active = True  # can set false if user should click before typing
         self.terminal_window = pygame.Surface((self.terminal_width, self.terminal_height))
+
+class WorkingTree(Terminal):
+    def __init__(self):
+        super().__init__()
+        # Define working tree window variables
+        self.working_tree_width = 400
+        self.working_tree_height = 500
+        self.working_tree_background_color = pygame.Color(8,1,20)
+        self.working_tree_text_color = self.terminal_text_color
+        self.working_tree_active = False
+        self.working_tree_box = pygame.Rect(self.terminal_width, 0, self.working_tree_width, self.working_tree_height)
+        self.working_tree_window = pygame.Surface((self.working_tree_width, self.working_tree_height))
+
+class OptionsMenu:
+    def __init__(self, term, tree):
+        self.options_width = tree.working_tree_width
+        self.options_height = term.terminal_height - tree.working_tree_height
+        self.options_background_color = pygame.Color(15, 15, 15)
+        self.options_window = pygame.Surface((self.options_width, self.options_height))
+
+        self.overlay_surface_width = tree.working_tree_width
+        self.overlay_surface_height = tree.working_tree_height
+        self.overlay_background_color = pygame.Color(100, 100, 100)
+        self.overlay_surface = pygame.Surface((self.overlay_surface_width, self.overlay_surface_height))
+        self.overlay_surface.fill(term.terminal_background_color)
+        self.sub_font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', font_size)
+        self.color_menu_open = False
+
+
+class TerminalScrollbar:
+    def __init__(self, term):
+        self.terminal_max_rows = term.terminal_height // (font.get_height() + line_spacing)
+        self.terminal_scroll_position = 0
+        self.terminal_scrollbar_width = 20
+        self.terminal_scrollbar_height = 35
+        self.terminal_scrollbar_x = term.terminal_width - self.terminal_scrollbar_width
+        self.terminal_scrollbar_y = 0
 def main():
     command_handler = CommandHandler()
     directory_manager = DirectoryManager()
     term = Terminal()
+    tree = WorkingTree()
+
+    options = OptionsMenu(term, tree)
+    term_scroll = TerminalScrollbar(term)
 
     # ___________________________________________________
     # |Main Terminal Window               | working-    |
@@ -234,33 +271,8 @@ def main():
     global font_size, next_y, prev_lines, max_lines, line_spacing, master_folder_change
 
 
-    # Define working tree window variables
-    #directory_lines = []
-    working_tree_width = 400
-    working_tree_height = 500
-    working_tree_background_color = pygame.Color(8,1,20)
-    working_tree_text_color = term.terminal_text_color
-    working_tree_active = False
-    working_tree_box = pygame.Rect(term.terminal_width, 0, working_tree_width, working_tree_height)
-    working_tree_window = pygame.Surface((working_tree_width, working_tree_height))
-
-    # Define options window variables
-    options_width = working_tree_width
-    options_height = term.terminal_height - working_tree_height
-    options_background_color = pygame.Color(15, 15, 15)
-    options_window = pygame.Surface((options_width, options_height))
-
-    # Define Options menu overlay variables
-    overlay_surface_width = working_tree_width
-    overlay_surface_height = working_tree_height
-    overlay_background_color = pygame.Color(100, 100, 100)
-    overlay_surface = pygame.Surface((overlay_surface_width, overlay_surface_height))
-    overlay_surface.fill(term.terminal_background_color)
-    sub_font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', font_size)
-    color_menu_open = False
-
     # Define screen variable
-    screen_width = term.terminal_width + working_tree_width
+    screen_width = term.terminal_width + tree.working_tree_width
     screen_height = term.terminal_height
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Pseudo Terminal")
@@ -279,20 +291,14 @@ def main():
     cursor_blink_time = 500  # Time between cursor blinks in milliseconds
     cursor_blink_timer = 0
 
-    # Define terminal scrollbar variables
-    terminal_max_rows = term.terminal_height // (font.get_height() + line_spacing)
-    terminal_scroll_position = 0
-    terminal_scrollbar_width = 20
-    terminal_scrollbar_height = 35
-    terminal_scrollbar_x = term.terminal_width - terminal_scrollbar_width
-    terminal_scrollbar_y = 0
+
 
     # Define working tree scrollbar variable
-    working_tree_max_rows = working_tree_height // (font.get_height() + line_spacing)
+    working_tree_max_rows = tree.working_tree_height // (font.get_height() + line_spacing)
     working_tree_scroll_position = 0
     working_tree_scrollbar_width = 20
     working_tree_scrollbar_height = 35
-    working_tree_scrollbar_x = working_tree_width - working_tree_scrollbar_width
+    working_tree_scrollbar_x = tree.working_tree_width - working_tree_scrollbar_width
     working_tree_scrollbar_y = 0
 
     # Define command history
@@ -303,7 +309,7 @@ def main():
     overlay = 0
     
     # Define settings button
-    settings_button_rect = pygame.Rect(term.terminal_width + 25, working_tree_height + 25, 50 ,50 )
+    settings_button_rect = pygame.Rect(term.terminal_width + 25, tree.working_tree_height + 25, 50 ,50 )
     settings_image = pygame.image.load("img/settings.png")
     settings_image = pygame.transform.scale(settings_image, (40, 40))
 
@@ -344,7 +350,7 @@ def main():
                 else:
                     terminal_active = False
                 
-                if working_tree_box.collidepoint(event.pos):
+                if tree.working_tree_box.collidepoint(event.pos):
                     working_tree_active = True
                 else:
                     working_tree_active = False
@@ -357,11 +363,11 @@ def main():
                 elif settings_button_rect.collidepoint(event.pos) and overlay == 1:
                     overlay = 0
 
-                elif event.button == 4 and len(prev_lines) > terminal_max_rows and terminal_active:
-                    terminal_scroll_position = max(0, terminal_scroll_position - 1)
+                elif event.button == 4 and len(prev_lines) > term_scroll.terminal_max_rows and terminal_active:
+                    term_scroll.terminal_scroll_position = max(0, term_scroll.terminal_scroll_position - 1)
                 
-                elif event.button == 5 and len(prev_lines) > terminal_max_rows and terminal_active:
-                    terminal_scroll_position = min(len(prev_lines) - terminal_max_rows, terminal_scroll_position + 1)
+                elif event.button == 5 and len(prev_lines) > term_scroll.terminal_max_rows and terminal_active:
+                    term_scroll.terminal_scroll_position = min(len(prev_lines) - term_scroll.terminal_max_rows, term_scroll.terminal_scroll_position + 1)
 
                 
                 elif event.button == 4 and len(directory_manager.directory_lines) > working_tree_max_rows and working_tree_active:
@@ -373,8 +379,8 @@ def main():
 
             # If the user entered a key
             elif event.type == pygame.KEYDOWN:
-                if len(prev_lines) > terminal_max_rows:
-                    terminal_scroll_position = len(prev_lines) - terminal_max_rows
+                if len(prev_lines) > term_scroll.terminal_max_rows:
+                    terminal_scroll_position = len(prev_lines) - term_scroll.terminal_max_rows
                 # If the user has clicked onto the terminal window
                 if term.terminal_active:
                     # If user hits 'enter' key
@@ -458,18 +464,18 @@ def main():
             ui_manager.process_events(event)
 
         # Draw Options Window  
-        options_window.fill(options_background_color)  
-        screen.blit(options_window, (term.terminal_width, working_tree_height))
-        pygame.draw.rect(screen,options_background_color, settings_button_rect)
+        options.options_window.fill(options.options_background_color)
+        screen.blit(options.options_window, (term.terminal_width, tree.working_tree_height))
+        pygame.draw.rect(screen,options.options_background_color, settings_button_rect)
         screen.blit(settings_image, (settings_button_rect.centerx - 20, settings_button_rect.centery - 20))
             
         # If settings is enable
         if overlay == 1:
             # Draw menu overlay
-            overlay_surface.fill(overlay_background_color)
-            screen.blit(overlay_surface, (term.terminal_width, 0))
+            options.overlay_surface.fill(options.overlay_background_color)
+            screen.blit(options.overlay_surface, (term.terminal_width, 0))
 
-            if color_menu_open:
+            if options.color_menu_open:
                 background_color_picker_button.disable()
                 text_color_picker_button.disable()
 
@@ -484,24 +490,24 @@ def main():
             # Get current directory information
             background_color_picker_button.disable()
             text_color_picker_button.disable()
-            working_tree_window.fill(working_tree_background_color)
+            tree.working_tree_window.fill(tree.working_tree_background_color)
 
             # Draw working tree scroll bar if nec. 
             if (len(directory_manager.directory_lines) > working_tree_max_rows):
-                working_tree_scrollbar_y = int(working_tree_height*((working_tree_scroll_position) / (len(directory_manager.directory_lines) - working_tree_max_rows)))
+                working_tree_scrollbar_y = int(tree.working_tree_height*((working_tree_scroll_position) / (len(directory_manager.directory_lines) - working_tree_max_rows)))
                 if (working_tree_scroll_position == (len(directory_manager.directory_lines) - working_tree_max_rows)):
-                    working_tree_scrollbar_y = working_tree_height - working_tree_scrollbar_height
-                pygame.draw.rect(working_tree_window, (20, 120, 220), (working_tree_scrollbar_x, working_tree_scrollbar_y, working_tree_scrollbar_width, working_tree_scrollbar_height))
+                    working_tree_scrollbar_y = tree.working_tree_height - working_tree_scrollbar_height
+                pygame.draw.rect(tree.working_tree_window, (20, 120, 220), (working_tree_scrollbar_x, working_tree_scrollbar_y, working_tree_scrollbar_width, working_tree_scrollbar_height))
             #updates directory tree
             directory_manager.update_directory_lines()
 
             for i in range(working_tree_scroll_position, min(len(directory_manager.directory_lines), working_tree_scroll_position + working_tree_max_rows)):
-                tree_text = sub_font.render(directory_manager.directory_lines[i], True, working_tree_text_color)
-                y = (i - working_tree_scroll_position) * (sub_font.get_height() + line_spacing)
-                working_tree_window.blit(tree_text, (10, y))
+                tree_text = options.sub_font.render(directory_manager.directory_lines[i], True, tree.working_tree_text_color)
+                y = (i - working_tree_scroll_position) * (options.sub_font.get_height() + line_spacing)
+                tree.working_tree_window.blit(tree_text, (10, y))
 
             # Draw current directory
-            screen.blit(working_tree_window, (term.terminal_width, 0))
+            screen.blit(tree.working_tree_window, (term.terminal_width, 0))
             ui_manager.update(time_delta)
 
         # Get Terminal Ready to be drawn
@@ -514,11 +520,11 @@ def main():
         #terminal_window.blit(path_surface, (10, 10))
 
         # Draw Terminal Scroll bar
-        if (len(prev_lines) > terminal_max_rows):
-            terminal_scrollbar_y = int(term.terminal_height*((terminal_scroll_position) / (len(prev_lines) - terminal_max_rows)))
-            if (terminal_scroll_position == (len(prev_lines) - terminal_max_rows)):
-                terminal_scrollbar_y = term.terminal_height - terminal_scrollbar_height
-            pygame.draw.rect(term.terminal_window, (20, 120, 220), (terminal_scrollbar_x, terminal_scrollbar_y, terminal_scrollbar_width, terminal_scrollbar_height))
+        if (len(prev_lines) > term_scroll.terminal_max_rows):
+            terminal_scrollbar_y = int(term.terminal_height*((term_scroll.terminal_scroll_position) / (len(prev_lines) - term_scroll.terminal_max_rows)))
+            if (term_scroll.terminal_scroll_position == (len(prev_lines) - term_scroll.terminal_max_rows)):
+                term_scroll.terminal_scrollbar_y = term.terminal_height - term_scroll.terminal_scrollbar_height
+            pygame.draw.rect(term.terminal_window, (20, 120, 220), (term_scroll.terminal_scrollbar_x, term_scroll.terminal_scrollbar_y, term_scroll.terminal_scrollbar_width, term_scroll.terminal_scrollbar_height))
 
         # Draw the current text
         text_surface = font.render(current_path + input_text, True, term.terminal_text_color)
@@ -527,20 +533,20 @@ def main():
             term.terminal_window.blit(text_surface, (10, 0))
 
         ########## TODO: FIX BUG WITH SCROLL HERE!!!
-        elif len(prev_lines) > terminal_max_rows:
+        elif len(prev_lines) > term_scroll.terminal_max_rows:
             term.terminal_window.blit(text_surface, (10, term.terminal_height - font.get_height() - line_spacing))
 
             # Draw the previous commands
-            for i in reversed(range(terminal_scroll_position + 1, len(prev_lines))):
-                previous_surface = font.render(prev_lines[i], True, term.lterminal_text_color)
-                next_y = (i - terminal_scroll_position - 1) * (font.get_height() + line_spacing)
+            for i in reversed(range(term_scroll.terminal_scroll_position + 1, len(prev_lines))):
+                previous_surface = font.render(prev_lines[i], True, term.terminal_text_color)
+                next_y = (i - term_scroll.terminal_scroll_position - 1) * (font.get_height() + line_spacing)
                 term.terminal_window.blit(previous_surface, (10, next_y))
-        
+
         else:
             # Draw the previous commands
-            for i in range(terminal_scroll_position, min(len(prev_lines), terminal_scroll_position + terminal_max_rows)):
+            for i in range(term_scroll.terminal_scroll_position, min(len(prev_lines), term_scroll.terminal_scroll_position + term_scroll.terminal_max_rows)):
                 previous_surface = font.render(prev_lines[i], True, term.terminal_text_color)
-                next_y = (i - terminal_scroll_position) * (font.get_height() + line_spacing)
+                next_y = (i - term_scroll.terminal_scroll_position) * (font.get_height() + line_spacing)
                 term.terminal_window.blit(previous_surface, (10, next_y))
             
             term.terminal_window.blit(text_surface, (10, next_y + font.get_height() + line_spacing))
@@ -560,7 +566,7 @@ def main():
                 if len(prev_lines) == 0:
                     term.terminal_window.blit(cursor_surface, (cursor_pos, next_y))
 
-                elif len(prev_lines) > terminal_max_rows - 1:
+                elif len(prev_lines) > term_scroll.terminal_max_rows - 1:
                     term.terminal_window.blit(cursor_surface, (cursor_pos, term.terminal_height - font.get_height() - line_spacing))
                 else:
                     term.terminal_window.blit(cursor_surface, (cursor_pos, next_y + font.get_height() + line_spacing))
