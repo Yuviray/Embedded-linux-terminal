@@ -22,8 +22,6 @@ def appendTerminalText(text_to_add):
     prev_lines.append(text_to_add)
     next_y += font.get_height() + line_spacing
 
-
-
 class DirectoryManager:
     def __init__(self):
         self.directory_lines = []
@@ -240,7 +238,6 @@ class OptionsMenu:
         self.sub_font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', font_size)
         self.color_menu_open = False
 
-
 class TerminalScrollbar:
     def __init__(self, term):
         self.terminal_max_rows = term.terminal_height // (font.get_height() + line_spacing)
@@ -249,14 +246,48 @@ class TerminalScrollbar:
         self.terminal_scrollbar_height = 35
         self.terminal_scrollbar_x = term.terminal_width - self.terminal_scrollbar_width
         self.terminal_scrollbar_y = 0
+
+class TreeScrollBar:
+    def __init__(self,tree):
+        # Define working tree scrollbar variable
+        self.working_tree_max_rows = tree.working_tree_height // (font.get_height() + line_spacing)
+        self.working_tree_scroll_position = 0
+        self.working_tree_scrollbar_width = 20
+        self.working_tree_scrollbar_height = 35
+        self.working_tree_scrollbar_x = tree.working_tree_width - self.working_tree_scrollbar_width
+        self.working_tree_scrollbar_y = 0
+
+class SettingsButton:
+    def __init__(self, terminal_width, working_tree_height, screen_width, screen_height):
+        self.settings_button_rect = pygame.Rect(terminal_width + 25, working_tree_height + 25, 50, 50)
+        self.settings_image = pygame.transform.scale(pygame.image.load("img/settings.png"), (40, 40))
+
+        self.ui_manager = pygame_gui.UIManager((screen_width, screen_height))
+
+        # custom background color
+        self.background_color_picker_button = UIButton(
+            relative_rect=pygame.Rect(-310, -550, 220, 30),
+            text='Pick Background Color',
+            manager=self.ui_manager,
+            anchors={'left': 'right', 'right': 'right', 'top': 'bottom', 'bottom': 'bottom'}
+        )
+
+        # custom text color
+        self.text_color_picker_button = UIButton(
+            relative_rect=pygame.Rect(-310, -500, 220, 30),
+            text='Pick Text Color',
+            manager=self.ui_manager,
+            anchors={'left': 'right', 'right': 'right', 'top': 'bottom', 'bottom': 'bottom'}
+        )
 def main():
     command_handler = CommandHandler()
     directory_manager = DirectoryManager()
     term = Terminal()
     tree = WorkingTree()
-
     options = OptionsMenu(term, tree)
     term_scroll = TerminalScrollbar(term)
+    tree_scroll = TreeScrollBar(tree)
+
 
     # ___________________________________________________
     # |Main Terminal Window               | working-    |
@@ -277,6 +308,8 @@ def main():
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Pseudo Terminal")
 
+    settings = SettingsButton(term.terminal_width, tree.working_tree_height, screen_width, screen_height)
+
     # Define file path box
     current_path = file_manager.get_path_text()
     path_surface = font.render(current_path, True, term.terminal_text_color)
@@ -292,40 +325,12 @@ def main():
     cursor_blink_timer = 0
 
 
-
-    # Define working tree scrollbar variable
-    working_tree_max_rows = tree.working_tree_height // (font.get_height() + line_spacing)
-    working_tree_scroll_position = 0
-    working_tree_scrollbar_width = 20
-    working_tree_scrollbar_height = 35
-    working_tree_scrollbar_x = tree.working_tree_width - working_tree_scrollbar_width
-    working_tree_scrollbar_y = 0
-
     # Define command history
     command_history = []
     path_history = []
     max_history_length = 50
     history_index = 0
     overlay = 0
-    
-    # Define settings button
-    settings_button_rect = pygame.Rect(term.terminal_width + 25, tree.working_tree_height + 25, 50 ,50 )
-    settings_image = pygame.image.load("img/settings.png")
-    settings_image = pygame.transform.scale(settings_image, (40, 40))
-
-    ui_manager = pygame_gui.UIManager((screen_width, screen_height))
-    
-    #custom background color
-    background_color_picker_button= UIButton(relative_rect=pygame.Rect(-310, -550, 220, 30),
-                                        text='Pick Background Color', manager=ui_manager,
-                                        anchors={'left': 'right', 'right': 'right',
-                                                'top': 'bottom', 'bottom': 'bottom'})
-
-    #custom text color
-    text_color_picker_button = UIButton(relative_rect=pygame.Rect(-310, -500, 220, 30),
-                                    text='Pick Text Color', manager=ui_manager,
-                                    anchors={'left': 'right', 'right': 'right',
-                                            'top': 'bottom', 'bottom': 'bottom'})
 
     clock = pygame.time.Clock()
 
@@ -356,11 +361,11 @@ def main():
                     working_tree_active = False
 
                 # If the user clicked on settings button and the settings aren't up yet
-                if settings_button_rect.collidepoint(event.pos) and overlay == 0:
+                if settings.settings_button_rect.collidepoint(event.pos) and overlay == 0:
                     overlay = 1
 
                 # If the user clicked on settings button while settings are up
-                elif settings_button_rect.collidepoint(event.pos) and overlay == 1:
+                elif settings.settings_button_rect.collidepoint(event.pos) and overlay == 1:
                     overlay = 0
 
                 elif event.button == 4 and len(prev_lines) > term_scroll.terminal_max_rows and terminal_active:
@@ -370,11 +375,11 @@ def main():
                     term_scroll.terminal_scroll_position = min(len(prev_lines) - term_scroll.terminal_max_rows, term_scroll.terminal_scroll_position + 1)
 
                 
-                elif event.button == 4 and len(directory_manager.directory_lines) > working_tree_max_rows and working_tree_active:
-                    working_tree_scroll_position = max(0, working_tree_scroll_position - 1)
+                elif event.button == 4 and len(directory_manager.directory_lines) > tree_scroll.working_tree_max_rows and working_tree_active:
+                    tree_scroll.working_tree_scroll_position = max(0, tree_scroll.working_tree_scroll_position - 1)
                 
-                elif event.button == 5 and len(directory_manager.directory_lines) > working_tree_max_rows and working_tree_active:
-                    working_tree_scroll_position = min(len(directory_manager.directory_lines) - working_tree_max_rows, working_tree_scroll_position + 1)
+                elif event.button == 5 and len(directory_manager.directory_lines) > tree_scroll.working_tree_max_rows and working_tree_active:
+                    tree_scroll.working_tree_scroll_position = min(len(directory_manager.directory_lines) - tree_scroll.working_tree_max_rows, tree_scroll.working_tree_scroll_position + 1)
 
 
             # If the user entered a key
@@ -432,10 +437,10 @@ def main():
 
 
             # If user clicks the button to edit background color
-            elif event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == background_color_picker_button:
+            elif event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == settings.background_color_picker_button:
                 color_menu_open = True
                 background_color_picker = UIColourPickerDialog(pygame.Rect(905, 50, 390, 390),
-                                                ui_manager,
+                                                settings.ui_manager,
                                                 window_title="Change Background Color",
                                                 initial_colour=term.terminal_background_color)
                 
@@ -443,10 +448,10 @@ def main():
                     terminal_background_color = event.colour
 
             # If user clicks the button to edit text color
-            elif event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == text_color_picker_button:
+            elif event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == settings.text_color_picker_button:
                 color_menu_open = True
                 text_color_picker = UIColourPickerDialog(pygame.Rect(905, 50, 390, 390),
-                                                ui_manager,
+                                                settings.ui_manager,
                                                 window_title="Change Text Color",
                                                 initial_colour=term.terminal_text_color)
                 
@@ -456,18 +461,18 @@ def main():
             # If user exits out of color menu
             elif event.type == pygame_gui.UI_WINDOW_CLOSE:
                 color_menu_open = False
-                background_color_picker_button.enable()
+                settings.background_color_picker_button.enable()
                 background_color_picker = None
-                text_color_picker_button.enable()
+                settings.text_color_picker_button.enable()
                 text_color_picker = None
 
-            ui_manager.process_events(event)
+            settings.ui_manager.process_events(event)
 
         # Draw Options Window  
         options.options_window.fill(options.options_background_color)
         screen.blit(options.options_window, (term.terminal_width, tree.working_tree_height))
-        pygame.draw.rect(screen,options.options_background_color, settings_button_rect)
-        screen.blit(settings_image, (settings_button_rect.centerx - 20, settings_button_rect.centery - 20))
+        pygame.draw.rect(screen,options.options_background_color, settings.settings_button_rect)
+        screen.blit(settings.settings_image, (settings.settings_button_rect.centerx - 20, settings.settings_button_rect.centery - 20))
             
         # If settings is enable
         if overlay == 1:
@@ -476,39 +481,39 @@ def main():
             screen.blit(options.overlay_surface, (term.terminal_width, 0))
 
             if options.color_menu_open:
-                background_color_picker_button.disable()
-                text_color_picker_button.disable()
+                settings.background_color_picker_button.disable()
+                settings.text_color_picker_button.disable()
 
             else:
-                background_color_picker_button.enable()
-                text_color_picker_button.enable()
+                settings.background_color_picker_button.enable()
+                settings.text_color_picker_button.enable()
 
-            ui_manager.update(time_delta)
-            ui_manager.draw_ui(screen)
+            settings.ui_manager.update(time_delta)
+            settings.ui_manager.draw_ui(screen)
         
         else:
             # Get current directory information
-            background_color_picker_button.disable()
-            text_color_picker_button.disable()
+            settings.background_color_picker_button.disable()
+            settings.text_color_picker_button.disable()
             tree.working_tree_window.fill(tree.working_tree_background_color)
 
             # Draw working tree scroll bar if nec. 
-            if (len(directory_manager.directory_lines) > working_tree_max_rows):
-                working_tree_scrollbar_y = int(tree.working_tree_height*((working_tree_scroll_position) / (len(directory_manager.directory_lines) - working_tree_max_rows)))
-                if (working_tree_scroll_position == (len(directory_manager.directory_lines) - working_tree_max_rows)):
-                    working_tree_scrollbar_y = tree.working_tree_height - working_tree_scrollbar_height
-                pygame.draw.rect(tree.working_tree_window, (20, 120, 220), (working_tree_scrollbar_x, working_tree_scrollbar_y, working_tree_scrollbar_width, working_tree_scrollbar_height))
+            if (len(directory_manager.directory_lines) > tree_scroll.working_tree_max_rows):
+                tree_scroll.working_tree_scrollbar_y = int(tree.working_tree_height*((tree_scroll.working_tree_scroll_position) / (len(directory_manager.directory_lines) - tree_scroll.working_tree_max_rows)))
+                if (tree_scroll.working_tree_scroll_position == (len(directory_manager.directory_lines) - tree_scroll.working_tree_max_rows)):
+                    tree_scroll.working_tree_scrollbar_y = tree.working_tree_height - tree_scroll.working_tree_scrollbar_height
+                pygame.draw.rect(tree.working_tree_window, (20, 120, 220), (tree_scroll.working_tree_scrollbar_x, tree_scroll.working_tree_scrollbar_y, tree_scroll.working_tree_scrollbar_width, tree_scroll.working_tree_scrollbar_height))
             #updates directory tree
             directory_manager.update_directory_lines()
 
-            for i in range(working_tree_scroll_position, min(len(directory_manager.directory_lines), working_tree_scroll_position + working_tree_max_rows)):
+            for i in range(tree_scroll.working_tree_scroll_position, min(len(directory_manager.directory_lines), tree_scroll.working_tree_scroll_position + tree_scroll.working_tree_max_rows)):
                 tree_text = options.sub_font.render(directory_manager.directory_lines[i], True, tree.working_tree_text_color)
-                y = (i - working_tree_scroll_position) * (options.sub_font.get_height() + line_spacing)
+                y = (i - tree_scroll.working_tree_scroll_position) * (options.sub_font.get_height() + line_spacing)
                 tree.working_tree_window.blit(tree_text, (10, y))
 
             # Draw current directory
             screen.blit(tree.working_tree_window, (term.terminal_width, 0))
-            ui_manager.update(time_delta)
+            settings.ui_manager.update(time_delta)
 
         # Get Terminal Ready to be drawn
 
