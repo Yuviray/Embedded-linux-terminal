@@ -470,15 +470,15 @@ def main():
                 if (working_tree_scroll_position == (len(directory_lines) - working_tree_max_rows)):
                     working_tree_scrollbar_y = working_tree_height - working_tree_scrollbar_height
                 pygame.draw.rect(working_tree_window, (20, 120, 220), (working_tree_scrollbar_x, working_tree_scrollbar_y, working_tree_scrollbar_width, working_tree_scrollbar_height))
-            
-            if master_folder_change:
-                directory_lines.clear()
-                directory_text = file_manager.list_files(os.getcwd())
-                lines = directory_text.split('\n')
-                master_folder_change = False
-            
-                for line in lines:
-                    directory_lines.append(line)
+
+            directory_lines.clear()
+            directory_text = file_manager.list_files(os.getcwd())
+            lines = directory_text.split('\n')
+            master_folder_change = False
+
+            for line in lines:
+                directory_lines.append(line)
+
 
             for i in range(working_tree_scroll_position, min(len(directory_lines), working_tree_scroll_position + working_tree_max_rows)):
                 tree_text = sub_font.render(directory_lines[i], True, working_tree_text_color)
