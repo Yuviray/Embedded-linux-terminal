@@ -23,6 +23,19 @@ def appendTerminalText(text_to_add):
     next_y += font.get_height() + line_spacing
 
 
+
+class DirectoryManager:
+    def __init__(self):
+        self.directory_lines = []
+        self.master_folder_change = False
+
+    def update_directory_lines(self):
+        self.directory_lines.clear()
+        directory_text = file_manager.list_files(os.getcwd())
+        lines = directory_text.split('\n')
+        for line in lines:
+            self.directory_lines.append(line)
+
 class CommandHandler:
     def callCommand(self, user_input):
         self.file_manager = FileManagement()
@@ -189,8 +202,11 @@ class CommandHandler:
                 appendTerminalText("Error: Please specify a link.")
 
 
+
 def main():
     command_handler = CommandHandler()
+    directory_manager = DirectoryManager()
+
     # ___________________________________________________
     # |Main Terminal Window               | working-    |
     # |900w x 600h                        | tree        |
@@ -213,7 +229,7 @@ def main():
     terminal_window = pygame.Surface((terminal_width, terminal_height))
 
     # Define working tree window variables
-    directory_lines = [] 
+    #directory_lines = []
     working_tree_width = 400
     working_tree_height = 500
     working_tree_background_color = pygame.Color(8,1,20)
@@ -342,11 +358,11 @@ def main():
                     terminal_scroll_position = min(len(prev_lines) - terminal_max_rows, terminal_scroll_position + 1)
 
                 
-                elif event.button == 4 and len(directory_lines) > working_tree_max_rows and working_tree_active:
+                elif event.button == 4 and len(directory_manager.directory_lines) > working_tree_max_rows and working_tree_active:
                     working_tree_scroll_position = max(0, working_tree_scroll_position - 1)
                 
-                elif event.button == 5 and len(directory_lines) > working_tree_max_rows and working_tree_active:
-                    working_tree_scroll_position = min(len(directory_lines) - working_tree_max_rows, working_tree_scroll_position + 1)
+                elif event.button == 5 and len(directory_manager.directory_lines) > working_tree_max_rows and working_tree_active:
+                    working_tree_scroll_position = min(len(directory_manager.directory_lines) - working_tree_max_rows, working_tree_scroll_position + 1)
 
 
             # If the user entered a key
@@ -465,23 +481,16 @@ def main():
             working_tree_window.fill(working_tree_background_color)
 
             # Draw working tree scroll bar if nec. 
-            if (len(directory_lines) > working_tree_max_rows):
-                working_tree_scrollbar_y = int(working_tree_height*((working_tree_scroll_position) / (len(directory_lines) - working_tree_max_rows)))
-                if (working_tree_scroll_position == (len(directory_lines) - working_tree_max_rows)):
+            if (len(directory_manager.directory_lines) > working_tree_max_rows):
+                working_tree_scrollbar_y = int(working_tree_height*((working_tree_scroll_position) / (len(directory_manager.directory_lines) - working_tree_max_rows)))
+                if (working_tree_scroll_position == (len(directory_manager.directory_lines) - working_tree_max_rows)):
                     working_tree_scrollbar_y = working_tree_height - working_tree_scrollbar_height
                 pygame.draw.rect(working_tree_window, (20, 120, 220), (working_tree_scrollbar_x, working_tree_scrollbar_y, working_tree_scrollbar_width, working_tree_scrollbar_height))
+            #updates directory tree
+            directory_manager.update_directory_lines()
 
-            directory_lines.clear()
-            directory_text = file_manager.list_files(os.getcwd())
-            lines = directory_text.split('\n')
-            master_folder_change = False
-
-            for line in lines:
-                directory_lines.append(line)
-
-
-            for i in range(working_tree_scroll_position, min(len(directory_lines), working_tree_scroll_position + working_tree_max_rows)):
-                tree_text = sub_font.render(directory_lines[i], True, working_tree_text_color)
+            for i in range(working_tree_scroll_position, min(len(directory_manager.directory_lines), working_tree_scroll_position + working_tree_max_rows)):
+                tree_text = sub_font.render(directory_manager.directory_lines[i], True, working_tree_text_color)
                 y = (i - working_tree_scroll_position) * (sub_font.get_height() + line_spacing)
                 working_tree_window.blit(tree_text, (10, y))
 
