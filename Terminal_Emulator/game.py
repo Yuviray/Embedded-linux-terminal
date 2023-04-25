@@ -201,10 +201,6 @@ class CommandHandler:
             else:
                 appendTerminalText("Error: Please specify a link.")
 
-
-
-
-
 class Terminal:
     def __init__(self):
 
@@ -216,10 +212,23 @@ class Terminal:
         self.cursor_color = pygame.Color(255, 255, 255)
         self.terminal_active = True  # can set false if user should click before typing
         self.terminal_window = pygame.Surface((self.terminal_width, self.terminal_height))
+
+class WorkingTree(Terminal):
+    def __init__(self):
+        super().__init__()
+        # Define working tree window variables
+        self.working_tree_width = 400
+        self.working_tree_height = 500
+        self.working_tree_background_color = pygame.Color(8,1,20)
+        self.working_tree_text_color = self.terminal_text_color
+        self.working_tree_active = False
+        self.working_tree_box = pygame.Rect(self.terminal_width, 0, self.working_tree_width, self.working_tree_height)
+        self.working_tree_window = pygame.Surface((self.working_tree_width, self.working_tree_height))
 def main():
     command_handler = CommandHandler()
     directory_manager = DirectoryManager()
     term = Terminal()
+    tree = WorkingTree()
 
     # ___________________________________________________
     # |Main Terminal Window               | working-    |
@@ -233,26 +242,15 @@ def main():
 
     global font_size, next_y, prev_lines, max_lines, line_spacing, master_folder_change
 
-
-    # Define working tree window variables
-    #directory_lines = []
-    working_tree_width = 400
-    working_tree_height = 500
-    working_tree_background_color = pygame.Color(8,1,20)
-    working_tree_text_color = term.terminal_text_color
-    working_tree_active = False
-    working_tree_box = pygame.Rect(term.terminal_width, 0, working_tree_width, working_tree_height)
-    working_tree_window = pygame.Surface((working_tree_width, working_tree_height))
-
     # Define options window variables
-    options_width = working_tree_width
-    options_height = term.terminal_height - working_tree_height
+    options_width = tree.working_tree_width
+    options_height = term.terminal_height - tree.working_tree_height
     options_background_color = pygame.Color(15, 15, 15)
     options_window = pygame.Surface((options_width, options_height))
 
     # Define Options menu overlay variables
-    overlay_surface_width = working_tree_width
-    overlay_surface_height = working_tree_height
+    overlay_surface_width = tree.working_tree_width
+    overlay_surface_height = tree.working_tree_height
     overlay_background_color = pygame.Color(100, 100, 100)
     overlay_surface = pygame.Surface((overlay_surface_width, overlay_surface_height))
     overlay_surface.fill(term.terminal_background_color)
@@ -260,7 +258,7 @@ def main():
     color_menu_open = False
 
     # Define screen variable
-    screen_width = term.terminal_width + working_tree_width
+    screen_width = term.terminal_width + tree.working_tree_width
     screen_height = term.terminal_height
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Pseudo Terminal")
@@ -288,11 +286,11 @@ def main():
     terminal_scrollbar_y = 0
 
     # Define working tree scrollbar variable
-    working_tree_max_rows = working_tree_height // (font.get_height() + line_spacing)
+    working_tree_max_rows = tree.working_tree_height // (font.get_height() + line_spacing)
     working_tree_scroll_position = 0
     working_tree_scrollbar_width = 20
     working_tree_scrollbar_height = 35
-    working_tree_scrollbar_x = working_tree_width - working_tree_scrollbar_width
+    working_tree_scrollbar_x = tree.working_tree_width - working_tree_scrollbar_width
     working_tree_scrollbar_y = 0
 
     # Define command history
@@ -303,7 +301,7 @@ def main():
     overlay = 0
     
     # Define settings button
-    settings_button_rect = pygame.Rect(term.terminal_width + 25, working_tree_height + 25, 50 ,50 )
+    settings_button_rect = pygame.Rect(term.terminal_width + 25, tree.working_tree_height + 25, 50 ,50 )
     settings_image = pygame.image.load("img/settings.png")
     settings_image = pygame.transform.scale(settings_image, (40, 40))
 
@@ -344,7 +342,7 @@ def main():
                 else:
                     terminal_active = False
                 
-                if working_tree_box.collidepoint(event.pos):
+                if tree.working_tree_box.collidepoint(event.pos):
                     working_tree_active = True
                 else:
                     working_tree_active = False
@@ -459,7 +457,7 @@ def main():
 
         # Draw Options Window  
         options_window.fill(options_background_color)  
-        screen.blit(options_window, (term.terminal_width, working_tree_height))
+        screen.blit(options_window, (term.terminal_width, tree.working_tree_height))
         pygame.draw.rect(screen,options_background_color, settings_button_rect)
         screen.blit(settings_image, (settings_button_rect.centerx - 20, settings_button_rect.centery - 20))
             
@@ -484,24 +482,24 @@ def main():
             # Get current directory information
             background_color_picker_button.disable()
             text_color_picker_button.disable()
-            working_tree_window.fill(working_tree_background_color)
+            tree.working_tree_window.fill(tree.working_tree_background_color)
 
             # Draw working tree scroll bar if nec. 
             if (len(directory_manager.directory_lines) > working_tree_max_rows):
-                working_tree_scrollbar_y = int(working_tree_height*((working_tree_scroll_position) / (len(directory_manager.directory_lines) - working_tree_max_rows)))
+                working_tree_scrollbar_y = int(tree.working_tree_height*((working_tree_scroll_position) / (len(directory_manager.directory_lines) - working_tree_max_rows)))
                 if (working_tree_scroll_position == (len(directory_manager.directory_lines) - working_tree_max_rows)):
-                    working_tree_scrollbar_y = working_tree_height - working_tree_scrollbar_height
-                pygame.draw.rect(working_tree_window, (20, 120, 220), (working_tree_scrollbar_x, working_tree_scrollbar_y, working_tree_scrollbar_width, working_tree_scrollbar_height))
+                    working_tree_scrollbar_y = tree.working_tree_height - working_tree_scrollbar_height
+                pygame.draw.rect(tree.working_tree_window, (20, 120, 220), (working_tree_scrollbar_x, working_tree_scrollbar_y, working_tree_scrollbar_width, working_tree_scrollbar_height))
             #updates directory tree
             directory_manager.update_directory_lines()
 
             for i in range(working_tree_scroll_position, min(len(directory_manager.directory_lines), working_tree_scroll_position + working_tree_max_rows)):
-                tree_text = sub_font.render(directory_manager.directory_lines[i], True, working_tree_text_color)
+                tree_text = sub_font.render(directory_manager.directory_lines[i], True, tree.working_tree_text_color)
                 y = (i - working_tree_scroll_position) * (sub_font.get_height() + line_spacing)
-                working_tree_window.blit(tree_text, (10, y))
+                tree.working_tree_window.blit(tree_text, (10, y))
 
             # Draw current directory
-            screen.blit(working_tree_window, (term.terminal_width, 0))
+            screen.blit(tree.working_tree_window, (term.terminal_width, 0))
             ui_manager.update(time_delta)
 
         # Get Terminal Ready to be drawn
