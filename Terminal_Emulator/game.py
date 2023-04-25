@@ -1,13 +1,14 @@
 import pygame
 import os
 import time
-from functions import*
+from functions import FileManagement
+
 import pygame_gui
 from pygame_gui.elements import UIButton
 from pygame_gui.windows import UIColourPickerDialog
 
 pygame.init()
-
+file_manager = FileManagement()
 max_lines = 300
 prev_lines = []   
 line_spacing = 8
@@ -35,7 +36,7 @@ def callCommand(user_input):
     if command[0] == "cd":
         if len(command) == 2:
             try:    
-                cd(command[1])
+                file_manager.cd(command[1])
                 master_folder_change = True
             except:
                 appendTerminalText("Error: Please enter a valid path.")
@@ -43,7 +44,7 @@ def callCommand(user_input):
             appendTerminalText("Error: Please specify a path.")
 
     elif command[0] == "ls":
-        files = ls()
+        files = file_manager.ls()
         i = len(prev_lines)
         for file in files:
             last_time = os.path.getmtime(file)
@@ -54,7 +55,7 @@ def callCommand(user_input):
     elif command[0] == "cat":
         if len(command) == 2:
             try:
-                cat(command[1])
+                file_manager.cat(command[1])
             except:
                 appendTerminalText("Error: Please enter a valid file name.")
 
@@ -64,7 +65,7 @@ def callCommand(user_input):
     elif command[0] == "mkdir":
         if len(command) == 2:
             try:
-                mkdir(command[1])
+                file_manager.mkdir(command[1])
             except:
                 appendTerminalText("Error: Please enter a valid directory name.")
         else:
@@ -73,7 +74,7 @@ def callCommand(user_input):
     elif command[0] == "rm":
         if len(command) == 2:
             try:
-                rm(command[1])
+                file_manager.rm(command[1])
             except:
                 appendTerminalText("Error: Please enter a valid file name.")
 
@@ -83,7 +84,7 @@ def callCommand(user_input):
     elif command[0] == "rmdir":
         if len(command) == 2:
             try:
-                rmdir(command[1])
+                file_manager.rmdir(command[1])
             except:
                 appendTerminalText("Error: Please enter a valid directory name.")
         else:
@@ -93,13 +94,13 @@ def callCommand(user_input):
         if len(command) > 1:
             appendTerminalText("pwd: too many arguments")
         else:
-            pwd()
+            file_manager.pwd()
             
     elif command[0] == "mv":
         if len(command) > 1:
             if len(command) < 3:
                 try:
-                    mv(command[1], command[2])
+                    file_manager.mv(command[1], command[2])
                 except:
                     appendTerminalText("Error: Please enter a valid file name.")
 
@@ -110,7 +111,7 @@ def callCommand(user_input):
         if len(command) > 1:
             if len(command) < 3:
                 try:
-                    cp(command[1], command[2])
+                    file_manager.cp(command[1], command[2])
                 except:
                     appendTerminalText("Error: Please enter a valid file name.")
                     
@@ -120,7 +121,7 @@ def callCommand(user_input):
     elif command[0] == "touch":
         if len(command) > 1:
             try:
-                touch(command[1])
+                file_manager.touch(command[1])
             except:
                 appendTerminalText("Error: Please enter a valid file name.")
 
@@ -131,7 +132,7 @@ def callCommand(user_input):
         if len(command) > 1:
             if len(command) < 3:
                 try:
-                    chmod(command[1], command[2])
+                    file_manager.chmod(command[1], command[2])
                 except:
                     appendTerminalText("Error: Please enter a valid file name.")
 
@@ -142,7 +143,7 @@ def callCommand(user_input):
         if len(command) > 1:
             if len(command) < 3:
                 try:
-                    chown(command[1], command[2])
+                    file_manager.chown(command[1], command[2])
                 except:
                     appendTerminalText("Error: Please enter a valid file name.")
 
@@ -153,7 +154,7 @@ def callCommand(user_input):
         if len(command) > 1:
             if len(command) < 3:
                 try:
-                    grep(command[1], command[2])
+                    file_manager.grep(command[1], command[2])
                 except:
                     appendTerminalText("Error: Please enter a valid file name.")
 
@@ -164,21 +165,21 @@ def callCommand(user_input):
         if len(command) > 1:
             if len(command) > 2 :
                 try:
-                    head(command[1], command[2])
+                    file_manager.head(command[1], command[2])
                 except:
                     appendTerminalText("Error: Please enter a valid file name.")
             else:
-                head(command[1], 10)
+                file_manager.head(command[1], 10)
         else:
             appendTerminalText("Error: Please specify a file ")
             
     elif command[0] == "df":
-        df()
+        file_manager.df()
         
     elif command[0] == "wget ":
         if len(command) > 1:
             try:
-                rmdir(command[1])
+                file_manager.rmdir(command[1])
             except:
                 appendTerminalText("Error: Please enter a valid link")
         else:
@@ -239,7 +240,7 @@ def main():
     pygame.display.set_caption("Pseudo Terminal")
 
     # Define file path box
-    current_path = getPathText()
+    current_path = file_manager.get_path_text()
     path_surface = font.render(current_path, True, terminal_text_color)
 
     # Define text input box
@@ -299,7 +300,7 @@ def main():
     while True:
         # Handle events
         time_delta = clock.tick(60) / 1000
-        current_path = getPathText()
+        current_path = file_manager.get_path_text()
         
         # Process all events
         for event in pygame.event.get():
@@ -468,7 +469,7 @@ def main():
             
             if master_folder_change:
                 directory_lines.clear()
-                directory_text = list_files(os.getcwd()) 
+                directory_text = file_manager.list_files(os.getcwd())
                 lines = directory_text.split('\n')
                 master_folder_change = False
             
@@ -490,7 +491,7 @@ def main():
         terminal_window.fill(terminal_background_color)
 
         # Update the path text
-        current_path = getPathText()
+        current_path = file_manager.get_path_text()
         #terminal_window.blit(path_surface, (10, 10))
 
         # Draw Terminal Scroll bar
