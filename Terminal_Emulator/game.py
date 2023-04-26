@@ -402,7 +402,7 @@ def main():
     help_overlay_surface.fill(help_overlay_background_color)
     
     # Define help menu button
-    help_button_rect = pygame.Rect(term.terminal_width + 75, term.working_tree_height + 25, 50 ,50 )
+    help_button_rect = pygame.Rect(term.terminal_width + 75, tree.working_tree_height + 25, 50 ,50 )
     help_image = pygame.image.load("img/help-button.png")
     help_image = pygame.transform.scale(help_image, (50, 50))
 
