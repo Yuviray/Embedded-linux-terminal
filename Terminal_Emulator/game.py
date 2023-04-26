@@ -372,6 +372,14 @@ def main():
     global font_size, next_y, prev_lines, max_lines, line_spacing, master_folder_change
 
 
+
+    # Define help menu overlay variables
+    help_overlay_surface_width = working_tree_width
+    help_overlay_surface_height = working_tree_height
+    help_overlay_background_color = pygame.Color(255, 255, 255)
+    help_overlay_surface = pygame.Surface((help_overlay_surface_width, help_overlay_surface_height))
+    help_overlay_surface.fill(help_overlay_background_color)
+
     # Define screen variable
     screen_width = term.terminal_width + tree.working_tree_width
     screen_height = term.terminal_height
@@ -381,9 +389,9 @@ def main():
     settings = SettingsButton(term.terminal_width, tree.working_tree_height, screen_width, screen_height)
 
     # Define file path box
-    current_path = file_manager.get_path_text()
-    #path_surface = font.render(current_path, True, term.terminal_text_color)
-
+    
+    current_path = getPathText()
+    
     # Define text input box
     input_box = pygame.Rect(0, 0, term.terminal_width, term.terminal_height)
     input_text = ""
@@ -416,6 +424,7 @@ def main():
     setting_overlay = 0
     help_overlay = 0
 
+
     clock = pygame.time.Clock()
 
     while True:
@@ -445,6 +454,7 @@ def main():
                     working_tree_active = False
 
                 # If the user clicked on settings button and the settings aren't up yet
+
                 if settings.settings_button_rect.collidepoint(event.pos) and setting_overlay == 0:
                     setting_overlay = 1
 
@@ -455,6 +465,7 @@ def main():
                 # If the user clicked on the help button and the help window isn't up yet
                 if help_button_rect.collidepoint(event.pos) and help_overlay == 0:
                     help_overlay = 1
+
 
                 # If the user clicked on help window button while help window isn't up
                 elif help_button_rect.collidepoint(event.pos) and help_overlay == 1:
@@ -561,17 +572,21 @@ def main():
             settings.ui_manager.process_events(event)
 
         # Draw Options Window  
+
         options.options_window.fill(options.options_background_color)
         screen.blit(options.options_window, (term.terminal_width, tree.working_tree_height))
         pygame.draw.rect(screen,options.options_background_color, settings.settings_button_rect)
         screen.blit(settings.settings_image, (settings.settings_button_rect.centerx - 20, settings.settings_button_rect.centery - 20))
         pygame.draw.rect(screen,options.options_background_color, help_button_rect)
+
+
         screen.blit(help_image, (help_button_rect.centerx - 25, help_button_rect.centery - 25))
             
         # If settings is enable
         if setting_overlay == 1:
             # Draw menu overlay
             help_overlay = 0
+
             options.setting_overlay_surface.fill(options.setting_overlay_background_color)
             screen.blit(options.setting_overlay_surface, (term.terminal_width, 0))
 
@@ -642,8 +657,11 @@ def main():
             term.terminal_window.blit(text_surface, (10, 0))
 
         ########## TODO: FIX BUG WITH SCROLL HERE!!!
+
+
         elif len(prev_lines) > term_scroll.terminal_max_rows:
             term.terminal_window.blit(text_surface, (10, term.terminal_height - font.get_height() - line_spacing))
+
 
             # Draw the previous commands
             for i in reversed(range(term_scroll.terminal_scroll_position + 1, len(prev_lines))):
