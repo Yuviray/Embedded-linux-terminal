@@ -212,7 +212,7 @@ def main():
     working_tree_width = 400
     working_tree_height = 500
     working_tree_background_color = pygame.Color(8,1,20)
-    working_tree_text_color = terminal_text_color
+    working_tree_text_color = pygame.Color(255, 255, 255)
     working_tree_active = False
     working_tree_box = pygame.Rect(terminal_width, 0, working_tree_width, working_tree_height)
     working_tree_window = pygame.Surface((working_tree_width, working_tree_height))
@@ -224,13 +224,20 @@ def main():
     options_window = pygame.Surface((options_width, options_height))
 
     # Define Options menu overlay variables
-    overlay_surface_width = working_tree_width
-    overlay_surface_height = working_tree_height
-    overlay_background_color = pygame.Color(100, 100, 100)
-    overlay_surface = pygame.Surface((overlay_surface_width, overlay_surface_height))
-    overlay_surface.fill(terminal_background_color)
+    setting_overlay_surface_width = working_tree_width
+    setting_overlay_surface_height = working_tree_height
+    setting_overlay_background_color = pygame.Color(100, 100, 100)
+    setting_overlay_surface = pygame.Surface((setting_overlay_surface_width, setting_overlay_surface_height))
+    setting_overlay_surface.fill(setting_overlay_background_color)
     sub_font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', font_size)
     color_menu_open = False
+
+    # Define help menu overlay variables
+    help_overlay_surface_width = working_tree_width
+    help_overlay_surface_height = working_tree_height
+    help_overlay_background_color = pygame.Color(255, 255, 255)
+    help_overlay_surface = pygame.Surface((help_overlay_surface_width, help_overlay_surface_height))
+    help_overlay_surface.fill(help_overlay_background_color)
 
     # Define screen variable
     screen_width = terminal_width + working_tree_width
@@ -240,8 +247,6 @@ def main():
 
     # Define file path box
     current_path = getPathText()
-    path_surface = font.render(current_path, True, terminal_text_color)
-
     # Define text input box
     input_box = pygame.Rect(0, 0, terminal_width, terminal_height)
     input_text = ""
@@ -273,12 +278,19 @@ def main():
     path_history = []
     max_history_length = 50
     history_index = 0
-    overlay = 0
+    setting_overlay = 0
+    help_overlay = 0
     
     # Define settings button
     settings_button_rect = pygame.Rect(terminal_width + 25, working_tree_height + 25, 50 ,50 )
     settings_image = pygame.image.load("img/settings.png")
     settings_image = pygame.transform.scale(settings_image, (40, 40))
+
+    # Define help menu button
+    help_button_rect = pygame.Rect(terminal_width + 75, working_tree_height + 25, 50 ,50 )
+    help_image = pygame.image.load("img/help-button.png")
+    help_image = pygame.transform.scale(help_image, (50, 50))
+
 
     ui_manager = pygame_gui.UIManager((screen_width, screen_height))
     
@@ -323,12 +335,20 @@ def main():
                     working_tree_active = False
 
                 # If the user clicked on settings button and the settings aren't up yet
-                if settings_button_rect.collidepoint(event.pos) and overlay == 0:
-                    overlay = 1
+                if settings_button_rect.collidepoint(event.pos) and setting_overlay == 0:
+                    setting_overlay = 1
 
                 # If the user clicked on settings button while settings are up
-                elif settings_button_rect.collidepoint(event.pos) and overlay == 1:
-                    overlay = 0
+                elif settings_button_rect.collidepoint(event.pos) and setting_overlay == 1:
+                    setting_overlay = 0
+
+                # If the user clicked on the help button and the help window isn't up yet
+                if help_button_rect.collidepoint(event.pos) and help_overlay == 0:
+                    help_overlay = 1
+
+                # If the user clicked on help window button while help window isn't up
+                elif help_button_rect.collidepoint(event.pos) and help_overlay == 1:
+                    help_overlay = 0
 
                 elif event.button == 4 and len(prev_lines) > terminal_max_rows and terminal_active:
                     terminal_scroll_position = max(0, terminal_scroll_position - 1)
@@ -435,12 +455,15 @@ def main():
         screen.blit(options_window, (terminal_width, working_tree_height)) 
         pygame.draw.rect(screen,options_background_color, settings_button_rect)
         screen.blit(settings_image, (settings_button_rect.centerx - 20, settings_button_rect.centery - 20))
+        pygame.draw.rect(screen,options_background_color, help_button_rect)
+        screen.blit(help_image, (help_button_rect.centerx - 25, help_button_rect.centery - 25))
             
         # If settings is enable
-        if overlay == 1:
+        if setting_overlay == 1:
             # Draw menu overlay
-            overlay_surface.fill(overlay_background_color)
-            screen.blit(overlay_surface, (terminal_width, 0))
+            help_overlay = 0
+            setting_overlay_surface.fill(setting_overlay_background_color)
+            screen.blit(setting_overlay_surface, (terminal_width, 0))
 
             if color_menu_open:
                 background_color_picker_button.disable()
@@ -452,6 +475,15 @@ def main():
 
             ui_manager.update(time_delta)
             ui_manager.draw_ui(screen)
+
+        elif help_overlay == 1:
+            # Draw menu overlay
+            setting_overlay = 0
+            help_overlay_surface.fill(help_overlay_background_color)
+            screen.blit(help_overlay_surface, (terminal_width, 0))
+
+            # ui_manager.update(time_delta)
+            # ui_manager.draw_ui(screen) 
         
         else:
             # Get current directory information
@@ -507,6 +539,7 @@ def main():
             terminal_window.blit(text_surface, (10, 0))
 
         ########## TODO: FIX BUG WITH SCROLL HERE!!!
+        # Bug: if you reach the bottom of the scroll, the text overlaps with the previous texts
         elif len(prev_lines) > terminal_max_rows:
             terminal_window.blit(text_surface, (10, terminal_height - font.get_height() - line_spacing))
 
