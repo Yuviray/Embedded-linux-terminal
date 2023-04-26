@@ -288,7 +288,7 @@ class WorkingTree(Terminal):
         self.working_tree_width = 400
         self.working_tree_height = 500
         self.working_tree_background_color = pygame.Color(8,1,20)
-        self.working_tree_text_color = self.terminal_text_color
+        self.working_tree_text_color = pygame.Color(255, 255, 255)
         self.working_tree_active = False
         self.working_tree_box = pygame.Rect(self.terminal_width, 0, self.working_tree_width, self.working_tree_height)
         self.working_tree_window = pygame.Surface((self.working_tree_width, self.working_tree_height))
@@ -300,11 +300,11 @@ class OptionsMenu:
         self.options_background_color = pygame.Color(15, 15, 15)
         self.options_window = pygame.Surface((self.options_width, self.options_height))
 
-        self.overlay_surface_width = tree.working_tree_width
-        self.overlay_surface_height = tree.working_tree_height
-        self.overlay_background_color = pygame.Color(100, 100, 100)
-        self.overlay_surface = pygame.Surface((self.overlay_surface_width, self.overlay_surface_height))
-        self.overlay_surface.fill(term.terminal_background_color)
+        self.setting_overlay_surface_width = tree.working_tree_width
+        self.setting_overlay_surface_height = tree.working_tree_height
+        self.setting_overlay_background_color = pygame.Color(100, 100, 100)
+        self.setting_overlay_surface = pygame.Surface((self.setting_overlay_surface_width, self.setting_overlay_surface_height))
+        self.setting_overlay_surface.fill(self.setting_overlay_background_color)
         self.sub_font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', font_size)
         self.color_menu_open = False
 
@@ -382,7 +382,7 @@ def main():
 
     # Define file path box
     current_path = file_manager.get_path_text()
-    path_surface = font.render(current_path, True, term.terminal_text_color)
+    #path_surface = font.render(current_path, True, term.terminal_text_color)
 
     # Define text input box
     input_box = pygame.Rect(0, 0, term.terminal_width, term.terminal_height)
@@ -393,6 +393,19 @@ def main():
     cursor_visible = True
     cursor_blink_time = 500  # Time between cursor blinks in milliseconds
     cursor_blink_timer = 0
+    
+    # Define help menu overlay variables
+    help_overlay_surface_width = tree.working_tree_width
+    help_overlay_surface_height = tree.working_tree_height
+    help_overlay_background_color = pygame.Color(255, 255, 255)
+    help_overlay_surface = pygame.Surface((help_overlay_surface_width, help_overlay_surface_height))
+    help_overlay_surface.fill(help_overlay_background_color)
+    
+    # Define help menu button
+    help_button_rect = pygame.Rect(term.terminal_width + 75, term.working_tree_height + 25, 50 ,50 )
+    help_image = pygame.image.load("img/help-button.png")
+    help_image = pygame.transform.scale(help_image, (50, 50))
+
 
 
     # Define command history
@@ -400,7 +413,8 @@ def main():
     path_history = []
     max_history_length = 50
     history_index = 0
-    overlay = 0
+    setting_overlay = 0
+    help_overlay = 0
 
     clock = pygame.time.Clock()
 
@@ -431,12 +445,20 @@ def main():
                     working_tree_active = False
 
                 # If the user clicked on settings button and the settings aren't up yet
-                if settings.settings_button_rect.collidepoint(event.pos) and overlay == 0:
-                    overlay = 1
+                if settings.settings_button_rect.collidepoint(event.pos) and setting_overlay == 0:
+                    setting_overlay = 1
 
                 # If the user clicked on settings button while settings are up
-                elif settings.settings_button_rect.collidepoint(event.pos) and overlay == 1:
-                    overlay = 0
+                elif settings.settings_button_rect.collidepoint(event.pos) and setting_overlay == 1:
+                    setting_overlay = 0
+                    
+                # If the user clicked on the help button and the help window isn't up yet
+                if help_button_rect.collidepoint(event.pos) and help_overlay == 0:
+                    help_overlay = 1
+
+                # If the user clicked on help window button while help window isn't up
+                elif help_button_rect.collidepoint(event.pos) and help_overlay == 1:
+                    help_overlay = 0
 
                 elif event.button == 4 and len(prev_lines) > term_scroll.terminal_max_rows and terminal_active:
                     term_scroll.terminal_scroll_position = max(0, term_scroll.terminal_scroll_position - 1)
@@ -543,12 +565,15 @@ def main():
         screen.blit(options.options_window, (term.terminal_width, tree.working_tree_height))
         pygame.draw.rect(screen,options.options_background_color, settings.settings_button_rect)
         screen.blit(settings.settings_image, (settings.settings_button_rect.centerx - 20, settings.settings_button_rect.centery - 20))
+        pygame.draw.rect(screen,options.options_background_color, help_button_rect)
+        screen.blit(help_image, (help_button_rect.centerx - 25, help_button_rect.centery - 25))
             
         # If settings is enable
-        if overlay == 1:
+        if setting_overlay == 1:
             # Draw menu overlay
-            options.overlay_surface.fill(options.overlay_background_color)
-            screen.blit(options.overlay_surface, (term.terminal_width, 0))
+            help_overlay = 0
+            options.setting_overlay_surface.fill(options.setting_overlay_background_color)
+            screen.blit(options.setting_overlay_surface, (term.terminal_width, 0))
 
             if options.color_menu_open:
                 settings.background_color_picker_button.disable()
@@ -560,6 +585,15 @@ def main():
 
             settings.ui_manager.update(time_delta)
             settings.ui_manager.draw_ui(screen)
+            
+        elif help_overlay == 1:
+            # Draw menu overlay
+            setting_overlay = 0
+            help_overlay_surface.fill(help_overlay_background_color)
+            screen.blit(help_overlay_surface, (term.terminal_width, 0))
+
+            # ui_manager.update(time_delta)
+            # ui_manager.draw_ui(screen) 
         
         else:
             # Get current directory information
