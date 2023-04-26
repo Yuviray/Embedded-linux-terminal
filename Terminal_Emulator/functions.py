@@ -80,7 +80,8 @@ class FileManagement:
             text += '{}{}/\n'.format(indent, os.path.basename(root))
             subindent = ' ' * 4 * (level + 1)
             for f in files:
-                text += '{}{}\n'.format(subindent, f)
+                if not f.startswith('.'):
+                    text += '{}{}\n'.format(subindent, f)
         return text
 
     def df(self):
