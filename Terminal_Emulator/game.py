@@ -150,17 +150,6 @@ class CommandHandler:
             else:
                 appendTerminalText("Error: Please specify a file ")
 
-        elif command[0] == "chown":
-            if len(command) > 1:
-                if len(command) < 3:
-                    try:
-                        self.file_manager.chown(command[1], command[2])
-                    except:
-                        appendTerminalText("Error: Please enter a valid file name.")
-
-            else:
-                appendTerminalText("Error: Please specify a file ")
-
         elif command[0] == "grep":
             if len(command) > 1:
                 if len(command) < 3:
@@ -181,11 +170,11 @@ class CommandHandler:
                         appendTerminalText("Error: Please enter a valid file name.")
                 else:
                     try:
-                        self.file_manager.head(command[1])
+                        self.file_manager.head(command[1], 10)
                     except:
                         appendTerminalText("Error: Please enter a valid file name.")
             else:
-                self.file_manager.head(command[1], 10)
+                appendTerminalText("Error: Please enter a valid file name.")
 
         elif command[0] == "df":
             self.file_manager.df()
@@ -198,6 +187,87 @@ class CommandHandler:
                     appendTerminalText("Error: Please enter a valid link")
             else:
                 appendTerminalText("Error: Please specify a link.")
+
+        elif command[0] == "find":
+            if len(command) >= 2:
+                startpath = command[1]
+                name = None
+                type = None
+
+                if '-name' in command:
+                    try:
+                        name_index = command.index('-name')
+                        name = command[name_index + 1]
+                    except IndexError:
+                        appendTerminalText("Error: Please specify a name after -name flag.")
+                        return
+
+                if '-type' in command:
+                    try:
+                        type_index = command.index('-type')
+                        type = command[type_index + 1]
+                        if type not in ['f', 'd']:
+                            appendTerminalText("Error: Invalid type. Use 'f' for files or 'd' for directories.")
+                            return
+                    except IndexError:
+                        appendTerminalText("Error: Please specify a type after -type flag.")
+                        return
+
+                try:
+                    results = self.file_manager.find(startpath, name=name, type=type)
+                    for result in results:
+                        appendTerminalText(result)
+                except Exception as e:
+                    appendTerminalText(f"Error: {e}")
+
+            else:
+                appendTerminalText("Error: Please specify a start path.")
+
+        elif command[0] == "echo":
+            if len(command) > 1:
+                text_to_echo = ' '.join(command[1:])
+                appendTerminalText(text_to_echo)
+            else:
+                appendTerminalText("Error: Please specify text to echo.")
+
+        elif command[0] == "date":
+            current_date = self.file_manager.date()
+            appendTerminalText(current_date)
+
+        elif command[0] == "whoami":
+            appendTerminalText(self.file_manager.whoami())
+
+        elif command[0] == "uname":
+            appendTerminalText(str(self.file_manager.uname()))
+
+        elif command[0] == "hostname":
+            appendTerminalText(self.file_manager.hostname())
+
+        elif command[0] == "ping":
+            if len(command) == 2:
+                appendTerminalText(self.file_manager.ping(command[1]))
+            else:
+                appendTerminalText("Error: Please specify a host.")
+
+        elif command[0] == "ps":
+            process_list = self.file_manager.ps()
+            for process in process_list:
+                appendTerminalText(f"{process['pid']} {process['user']} {process['command']} {process['stat']} {process['start']}")
+
+        elif command[0] == "top":
+            process_list = self.file_manager.top()
+            for process in process_list:
+                appendTerminalText(f"{process['pid']} {process['username']} {process['name']} {process['cpu_percent']} {process['memory_percent']}")
+
+        elif command[0] == "ifconfig":
+            interface_info = self.file_manager.ifconfig()
+            for interface, addresses in interface_info.items():
+                appendTerminalText(f"{interface}:")
+                for address_info in addresses:
+                    appendTerminalText(f"    inet {address_info['address']} netmask {address_info['netmask']}")
+    
+
+
 
 class Terminal:
     def __init__(self):
@@ -582,4 +652,5 @@ def main():
         # Update the display
         pygame.display.update()
 
-main()
+if __name__ == '__main__':
+    main()
