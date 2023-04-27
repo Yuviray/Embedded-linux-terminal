@@ -326,7 +326,7 @@ class ScrollBar():
         self.y_cord = y_val
 
 class DropDown:
-    def __init__(self, x, y, width, height, options, font_color, font_size, background_color, font_obj=None, callback=None):
+    def __init__(self, x, y, width, height, options, font_color, font_size, background_color, font_obj=None, callback=None, max_options=5):
         self.x = x
         self.y = y
         self.width = width
@@ -340,6 +340,8 @@ class DropDown:
         self.font = font_obj if font_obj else pygame.font.Font(None, font_size)
         self.option_rects = []
         self.callback = callback
+        self.max_options = max_options
+        self.scroll_position = 0
 
         self.main_rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
@@ -349,7 +351,8 @@ class DropDown:
         window.blit(text, (self.x + 5, self.y + 5))
 
         if self.is_active:
-            for index, option in enumerate(self.options):
+            self.option_rects = []
+            for index, option in enumerate(self.options[self.scroll_position:self.scroll_position + self.max_options]):
                 pygame.draw.rect(window, self.background_color, (self.x, self.y + (index + 1) * self.height, self.width, self.height))
                 text = self.font.render(option, True, self.font_color)
                 window.blit(text, (self.x + 5, self.y + (index + 1) * self.height + 5))
@@ -360,13 +363,23 @@ class DropDown:
             if self.main_rect.collidepoint(event.pos):
                 self.is_active = True
         else:
-            for index, rect in enumerate(self.option_rects):
-                if rect.collidepoint(event.pos):
-                    self.active_option = self.options[index]
-                    if self.callback:
-                        self.callback(self.active_option)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 4:
+                    self.scroll_position = max(0, self.scroll_position - 1)
+                elif event.button == 5:
+                    self.scroll_position = min(len(self.options) - self.max_options, self.scroll_position + 1)
+                else:
+                    for index, rect in enumerate(self.option_rects):
+                        if rect.collidepoint(event.pos):
+                            self.active_option = self.options[self.scroll_position + index]
+                            if self.callback:
+                                self.callback(self.active_option)
+                            self.is_active = False
+                            break
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if not any(rect.collidepoint(event.pos) for rect in self.option_rects) and not self.main_rect.collidepoint(event.pos):
                     self.is_active = False
-                    break
+
 
 class Terminal(Window):
     def __init__(self):
@@ -443,7 +456,9 @@ class HelpOverlay:
         self.term = terminal
         self.overlay = False  
 
-        self.dropdown = DropDown(925, 40, 350, 30, ['ls', 'cd', 'Option 3'], (0, 0, 0), font.get_height(), (200, 200, 200), font_obj=font, callback=lambda option: self.display_text_file(option))
+        self.dropdown = DropDown(925, 40, 350, 30, ['ls', 'cd', 'echo','date',
+                                                   'whoami','uname','hostname',
+                                                   'ping', 'top', 'ipconfig'], (0, 0, 0), font.get_height(), (200, 200, 200), font_obj=font, callback=lambda option: self.display_text_file(option))
 
     def display_text(self, content):
         self.text_surface.fill(self.background_color)
@@ -566,7 +581,7 @@ def main():
                 elif options.help_button_rect.collidepoint(event.pos) and helper.overlay:
                     helper.overlay = False
                     
-                if helper.overlay == 1:
+                if helper.overlay:
                     helper.dropdown.handle_event(event)
 
                 elif event.button == 4 and len(terminal.prev_lines) > terminal.max_rows_of_text and terminal.active:
@@ -580,7 +595,6 @@ def main():
                 
                 elif event.button == 5 and len(directory_manager.directory_lines) > tree.max_rows_of_text and tree.active:
                     tree.scroll_bar.scroll_position = min(len(directory_manager.directory_lines) - tree.max_rows_of_text + 1, tree.scroll_bar.scroll_position + 1)
-
 
             # If the user entered a key
             elif event.type == pygame.KEYDOWN:

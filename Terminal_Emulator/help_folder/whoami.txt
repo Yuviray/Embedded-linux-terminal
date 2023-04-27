@@ -1,0 +1,2 @@
+whoami Command:
+    - displays username of username

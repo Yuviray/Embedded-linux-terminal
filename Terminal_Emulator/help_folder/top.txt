@@ -1,0 +1,3 @@
+-top Command
+-Shows running processes
+-It provides a dynamic real-time view of the running system

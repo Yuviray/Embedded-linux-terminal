@@ -1,0 +1,2 @@
+date Command:
+    -displays the current date
