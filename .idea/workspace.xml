@@ -5,7 +5,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Terminal_Emulator/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/Terminal_Emulator/functions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Terminal_Emulator/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Terminal_Emulator/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Terminal_Emulator/unit_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/Terminal_Emulator/unit_tests.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,7 +26,8 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -78,6 +78,9 @@
       <workItem from="1682401681486" duration="484000" />
       <workItem from="1682450821795" duration="700000" />
       <workItem from="1682454467688" duration="2832000" />
+      <workItem from="1682548477354" duration="86000" />
+      <workItem from="1682548568758" duration="123000" />
+      <workItem from="1682548712559" duration="2821000" />
     </task>
     <task id="LOCAL-00001" summary="fixed cd to enter directory now">
       <created>1680639038488</created>
@@ -108,10 +111,10 @@
     <option name="LAST_COMMIT_MESSAGE" value="fixed cd to enter directory now" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Embedded_linux_terminal$testing.coverage" NAME="testing Coverage Results" MODIFIED="1682463082342" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Terminal_Emulator" />
+    <SUITE FILE_PATH="coverage/Embedded_linux_terminal$testing.coverage" NAME="testing Coverage Results" MODIFIED="1682549354009" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Terminal_Emulator" />
     <SUITE FILE_PATH="coverage/Embedded_linux_terminal$.coverage" NAME=" Coverage Results" MODIFIED="1682478219295" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Terminal_Emulator" />
-    <SUITE FILE_PATH="coverage/Embedded_linux_terminal$functions.coverage" NAME="functions Coverage Results" MODIFIED="1682482545386" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Terminal_Emulator" />
-    <SUITE FILE_PATH="coverage/Embedded_linux_terminal$game.coverage" NAME="game Coverage Results" MODIFIED="1682482548470" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Terminal_Emulator" />
+    <SUITE FILE_PATH="coverage/Embedded_linux_terminal$functions.coverage" NAME="functions Coverage Results" MODIFIED="1682540298619" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Terminal_Emulator" />
+    <SUITE FILE_PATH="coverage/Embedded_linux_terminal$game.coverage" NAME="game Coverage Results" MODIFIED="1682551634241" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Terminal_Emulator" />
     <SUITE FILE_PATH="coverage/Embedded_linux_terminal$main.coverage" NAME="main Coverage Results" MODIFIED="1682398212202" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Terminal_Emulator" />
   </component>
 </project>

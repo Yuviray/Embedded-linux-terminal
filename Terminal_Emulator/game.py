@@ -9,23 +9,11 @@ from pygame_gui.windows import UIColourPickerDialog
 
 pygame.init()
 file_manager = FileManagement()
-max_lines = 300
-prev_lines = []   
-line_spacing = 8
-next_y = 0
-font_size = 16
-font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', font_size)
-master_folder_change = True
-
-def appendTerminalText(text_to_add):
-    global line_spacing, prev_lines, next_y, font
-    prev_lines.append(text_to_add)
-    next_y += font.get_height() + line_spacing
 
 class DirectoryManager:
     def __init__(self):
         self.directory_lines = []
-        self.master_folder_change = False
+        self.master_folder_change = True
 
     def update_directory_lines(self):
         self.directory_lines.clear()
@@ -33,12 +21,15 @@ class DirectoryManager:
         lines = directory_text.split('\n')
         for line in lines:
             self.directory_lines.append(line)
+    
+    def negateMasterFolderChange(self):
+        self.master_folder_change = not self.master_folder_change
 
 class CommandHandler:
-    def callCommand(self, user_input):
+    def callCommand(self, terminal):
         self.file_manager = FileManagement()
 
-        command = user_input.split()
+        command = terminal.text.split()
 
         # if user does not enter anything
         if len(command) == 0:
@@ -50,17 +41,17 @@ class CommandHandler:
                 try:
                     self.file_manager.cd(command[1])
                 except:
-                    appendTerminalText("Error: Please enter a valid path.")
+                    terminal.appendTerminalText("Error: Please enter a valid path.")
             else:
-                appendTerminalText("Error: Please specify a path.")
+                terminal.appendTerminalText("Error: Please specify a path.")
 
         elif command[0] == "ls":
             files = self.file_manager.ls()
-            i = len(prev_lines)
+            i = len(terminal.prev_lines)
             for file in files:
                 last_time = os.path.getmtime(file)
                 last_time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(last_time))
-                appendTerminalText(last_time_str + "\t\t\t\t" + str(file))
+                terminal.appendTerminalText(last_time_str + "\t\t\t\t" + str(file))
                 i += 1
 
         elif command[0] == "cat":
@@ -68,42 +59,42 @@ class CommandHandler:
                 try:
                     self.file_manager.cat(command[1])
                 except:
-                    appendTerminalText("Error: Please enter a valid file name.")
+                    terminal.appendTerminalText("Error: Please enter a valid file name.")
 
             else:
-                appendTerminalText("Error: Please specify a file name.")
+                terminal.appendTerminalText("Error: Please specify a file name.")
 
         elif command[0] == "mkdir":
             if len(command) == 2:
                 try:
                     self.file_manager.mkdir(command[1])
                 except:
-                    appendTerminalText("Error: Please enter a valid directory name.")
+                    terminal.appendTerminalText("Error: Please enter a valid directory name.")
             else:
-                appendTerminalText("Error: Please specify a directory name.")
+                terminal.appendTerminalText("Error: Please specify a directory name.")
 
         elif command[0] == "rm":
             if len(command) == 2:
                 try:
                     self.file_manager.rm(command[1])
                 except:
-                    appendTerminalText("Error: Please enter a valid file name.")
+                    terminal.appendTerminalText("Error: Please enter a valid file name.")
 
             else:
-                appendTerminalText("Error: Please specify a file name.")
+                terminal.appendTerminalText("Error: Please specify a file name.")
 
         elif command[0] == "rmdir":
             if len(command) == 2:
                 try:
                     self.file_manager.rmdir(command[1])
                 except:
-                    appendTerminalText("Error: Please enter a valid directory name.")
+                    terminal.appendTerminalText("Error: Please enter a valid directory name.")
             else:
-                appendTerminalText("Error: Please specify a directory name.")
+                terminal.appendTerminalText("Error: Please specify a directory name.")
 
         elif command[0] == "pwd":
             if len(command) > 1:
-                appendTerminalText("pwd: too many arguments")
+                terminal.appendTerminalText("pwd: too many arguments")
             else:
                 self.file_manager.pwd()
 
@@ -113,10 +104,10 @@ class CommandHandler:
                     try:
                         self.file_manager.mv(command[1], command[2])
                     except:
-                        appendTerminalText("Error: Please enter a valid file name.")
+                        terminal.appendTerminalText("Error: Please enter a valid file name.")
 
             else:
-                appendTerminalText("Error: Please specify a file source.")
+                terminal.appendTerminalText("Error: Please specify a file source.")
 
         elif command[0] == "cp":
             if len(command) > 1:
@@ -124,20 +115,20 @@ class CommandHandler:
                     try:
                         self.file_manager.cp(command[1], command[2])
                     except:
-                        appendTerminalText("Error: Please enter a valid file name.")
+                        terminal.appendTerminalText("Error: Please enter a valid file name.")
 
             else:
-                appendTerminalText("Error: Please specify a file source.")
+                terminal.appendTerminalText("Error: Please specify a file source.")
 
         elif command[0] == "touch":
             if len(command) > 1:
                 try:
                     self.file_manager.touch(command[1])
                 except:
-                    appendTerminalText("Error: Please enter a valid file name.")
+                    terminal.appendTerminalText("Error: Please enter a valid file name.")
 
             else:
-                appendTerminalText("Error: Please specify a file name.")
+                terminal.appendTerminalText("Error: Please specify a file name.")
 
         elif command[0] == "chmod":
             if len(command) > 1:
@@ -145,10 +136,10 @@ class CommandHandler:
                     try:
                         self.file_manager.chmod(command[1], command[2])
                     except:
-                        appendTerminalText("Error: Please enter a valid file name.")
+                        terminal.appendTerminalText("Error: Please enter a valid file name.")
 
             else:
-                appendTerminalText("Error: Please specify a file ")
+                terminal.appendTerminalText("Error: Please specify a file ")
 
         elif command[0] == "grep":
             if len(command) > 1:
@@ -156,10 +147,10 @@ class CommandHandler:
                     try:
                         self.file_manager.grep(command[1], command[2])
                     except:
-                        appendTerminalText("Error: Please enter a valid file name.")
+                        terminal.appendTerminalText("Error: Please enter a valid file name.")
 
             else:
-                appendTerminalText("Error: Please specify a file ")
+                terminal.appendTerminalText("Error: Please specify a file ")
 
         elif command[0] == "head":
             if len(command) > 1:
@@ -167,14 +158,14 @@ class CommandHandler:
                     try:
                         self.file_manager.head(command[1], command[2])
                     except:
-                        appendTerminalText("Error: Please enter a valid file name.")
+                        terminal.appendTerminalText("Error: Please enter a valid file name.")
                 else:
                     try:
                         self.file_manager.head(command[1], 10)
                     except:
-                        appendTerminalText("Error: Please enter a valid file name.")
+                        terminal.appendTerminalText("Error: Please enter a valid file name.")
             else:
-                appendTerminalText("Error: Please enter a valid file name.")
+                terminal.appendTerminalText("Error: Please enter a valid file name.")
 
         elif command[0] == "df":
             self.file_manager.df()
@@ -184,9 +175,9 @@ class CommandHandler:
                 try:
                     self.file_manager.wget(command[1])
                 except:
-                    appendTerminalText("Error: Please enter a valid link")
+                    terminal.appendTerminalText("Error: Please enter a valid link")
             else:
-                appendTerminalText("Error: Please specify a link.")
+                terminal.appendTerminalText("Error: Please specify a link.")
 
         elif command[0] == "find":
             if len(command) >= 2:
@@ -199,7 +190,7 @@ class CommandHandler:
                         name_index = command.index('-name')
                         name = command[name_index + 1]
                     except IndexError:
-                        appendTerminalText("Error: Please specify a name after -name flag.")
+                        terminal.appendTerminalText("Error: Please specify a name after -name flag.")
                         return
 
                 if '-type' in command:
@@ -207,132 +198,177 @@ class CommandHandler:
                         type_index = command.index('-type')
                         type = command[type_index + 1]
                         if type not in ['f', 'd']:
-                            appendTerminalText("Error: Invalid type. Use 'f' for files or 'd' for directories.")
+                            terminal.appendTerminalText("Error: Invalid type. Use 'f' for files or 'd' for directories.")
                             return
                     except IndexError:
-                        appendTerminalText("Error: Please specify a type after -type flag.")
+                        terminal.appendTerminalText("Error: Please specify a type after -type flag.")
                         return
 
                 try:
                     results = self.file_manager.find(startpath, name=name, type=type)
                     for result in results:
-                        appendTerminalText(result)
+                        terminal.appendTerminalText(result)
                 except Exception as e:
-                    appendTerminalText(f"Error: {e}")
+                    terminal.appendTerminalText(f"Error: {e}")
 
             else:
-                appendTerminalText("Error: Please specify a start path.")
+                terminal.appendTerminalText("Error: Please specify a start path.")
 
         elif command[0] == "echo":
             if len(command) > 1:
                 text_to_echo = ' '.join(command[1:])
-                appendTerminalText(text_to_echo)
+                terminal.appendTerminalText(text_to_echo)
             else:
-                appendTerminalText("Error: Please specify text to echo.")
+                terminal.appendTerminalText("Error: Please specify text to echo.")
 
         elif command[0] == "date":
             current_date = self.file_manager.date()
-            appendTerminalText(current_date)
+            terminal.appendTerminalText(current_date)
 
         elif command[0] == "whoami":
-            appendTerminalText(self.file_manager.whoami())
+            terminal.appendTerminalText(self.file_manager.whoami())
 
         elif command[0] == "uname":
-            appendTerminalText(str(self.file_manager.uname()))
+            terminal.appendTerminalText(str(self.file_manager.uname()))
 
         elif command[0] == "hostname":
-            appendTerminalText(self.file_manager.hostname())
+            terminal.appendTerminalText(self.file_manager.hostname())
 
         elif command[0] == "ping":
             if len(command) == 2:
-                appendTerminalText(self.file_manager.ping(command[1]))
+                terminal.appendTerminalText(self.file_manager.ping(command[1]))
             else:
-                appendTerminalText("Error: Please specify a host.")
+                terminal.appendTerminalText("Error: Please specify a host.")
 
         elif command[0] == "ps":
             process_list = self.file_manager.ps()
             for process in process_list:
-                appendTerminalText(f"{process['pid']} {process['user']} {process['command']} {process['stat']} {process['start']}")
+                terminal.appendTerminalText(f"{process['pid']} {process['user']} {process['command']} {process['stat']} {process['start']}")
 
         elif command[0] == "top":
             process_list = self.file_manager.top()
             for process in process_list:
-                appendTerminalText(f"{process['pid']} {process['username']} {process['name']} {process['cpu_percent']} {process['memory_percent']}")
+                terminal.appendTerminalText(f"{process['pid']} {process['username']} {process['name']} {process['cpu_percent']} {process['memory_percent']}")
 
         elif command[0] == "ifconfig":
             interface_info = self.file_manager.ifconfig()
             for interface, addresses in interface_info.items():
-                appendTerminalText(f"{interface}:")
+                terminal.appendTerminalText(f"{interface}:")
                 for address_info in addresses:
-                    appendTerminalText(f"    inet {address_info['address']} netmask {address_info['netmask']}")
+                    terminal.appendTerminalText(f"    inet {address_info['address']} netmask {address_info['netmask']}")
+
+    # ___________________________________________________
+    # |Main Terminal Window               | working-    |
+    # |900w x 600h                        | tree        |
+    # |                                   | 400w x 500h |
+    # |                                   |             |
+    # |                                   |_____________|
+    # |                                   | Options     |
+    # |                                   | 400w x 100h |
+    # |___________________________________|_____________|
+
+class Window:
+    def __init__(self, wid, heit, x_val, y_val, b_color, t_color, font_sz):
+        self.width = wid
+        self.height = heit
+        self.x_cord = x_val
+        self.y_cord = y_val
+        self.background_color = b_color
+        self.text_color = t_color
+        self.font_size = font_sz
+        self.line_spacing = self.font_size // 2
+        self.font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', self.font_size)
+        self.max_rows_of_text = self.height // (self.font.get_height() + self.line_spacing)
+        self.text = ""
+        self.next_y_for_print = 0
+        self.surface = pygame.Surface((self.width, self.height))
     
+    def setWidth(self, width):
+        self.panel_width = width
+    def setHeight(self, height):
+        self.panel_height = height
+    def setXcord(self, x_val):
+        self.x_cord = x_val
+    def setYcord(self, y_val):
+        self.y_cord = y_val
+    def setBackgroundColor(self, color):
+        self.background_color = color
+    def setTextColor(self, color):
+        self.text_color = color
+    def setFontSize(self, font_sz):
+        self.font_size = font_sz
+    def setFont(self, fon):
+        self.font = fon
+    def setText(self, tex):
+        self.text = tex
+    def setNextYforPrint(self, n_y):
+        self.next_y_for_print = n_y
+    def setSurface(self, surf):
+        self.surface = surf
 
 
+class ScrollBar():
+    def __init__(self, scroll_pos, wid, heit, x_val, y_val):
+        self.scroll_position = scroll_pos
+        self.width = wid
+        self.height = heit
+        self.x_cord = x_val
+        self.y_cord = y_val
+    
+    def setScrollPosition(self, pos):
+        self.scroll_position = pos
+    def setWidth(self, wid):
+        self.width = wid
+    def setHeight(self, heit):
+        self.height = heit
+    def setXcord(self, x_val):
+        self.x_cord = x_val
+    def setYcord(self, y_val):
+        self.y_cord = y_val
 
-class Terminal:
+
+class Terminal(Window):
     def __init__(self):
+        super().__init__(900, 600, 0, 0, pygame.Color(0,0,0), pygame.Color(255,255,255), 16)
+        self.active = True  # can set false if user should click before typing
+        self.input_box = pygame.Rect(self.x_cord, self.y_cord, self.width, self.height)
+        
+        self.scroll_bar = ScrollBar(0, 20 ,35, self.width - 20, 0)
 
-        # Define terminal window variables
-        self.terminal_width = 900
-        self.terminal_height = 600
-        self.terminal_background_color = pygame.Color(0, 0, 0)
-        self.terminal_text_color = pygame.Color(255, 255, 255)
-        self.cursor_color = pygame.Color(255, 255, 255)
-        self.terminal_active = True  # can set false if user should click before typing
-        self.terminal_window = pygame.Surface((self.terminal_width, self.terminal_height))
+        self.cursor_surface = self.font.render("|", True, self.text_color)
+        self.cursor_visible = True
+        self.cursor_blink_time = 500  # Time between cursor blinks in milliseconds
+        self.cursor_blink_timer = 0
 
-class WorkingTree(Terminal):
+        # Define command history
+        self.command_history = []
+        self.path_history = []
+        self.max_history_length = 50
+        self.prev_lines = []
+        self.max_prev_lines = 300
+        self.history_index = 0
+
+    def setHistoryIndex(self, i):
+        self.history_index = i
+
+    def appendTerminalText(self, text_to_add):
+        self.prev_lines.append(text_to_add)
+        self.setNextYforPrint(self.next_y_for_print + self.font.get_height() + self.line_spacing)
+
+class TreeDiagram(Window):
     def __init__(self):
-        super().__init__()
-        # Define working tree window variables
-        self.working_tree_width = 400
-        self.working_tree_height = 500
-        self.working_tree_background_color = pygame.Color(8,1,20)
-        self.working_tree_text_color = pygame.Color(255, 255, 255)
-        self.working_tree_active = False
-        self.working_tree_box = pygame.Rect(self.terminal_width, 0, self.working_tree_width, self.working_tree_height)
-        self.working_tree_window = pygame.Surface((self.working_tree_width, self.working_tree_height))
+        super().__init__(400, 500, 900, 0, pygame.Color(8,1,20), pygame.Color(255,255,255), 16)
+        self.active = False
+        self.input_box = pygame.Rect(self.x_cord, self.y_cord, self.width, self.height)
+        self.scroll_bar = ScrollBar(0, 20 ,35, self.width - 20, 0)
 
-class OptionsMenu:
-    def __init__(self, term, tree):
-        self.options_width = tree.working_tree_width
-        self.options_height = term.terminal_height - tree.working_tree_height
-        self.options_background_color = pygame.Color(15, 15, 15)
-        self.options_window = pygame.Surface((self.options_width, self.options_height))
-
-        self.setting_overlay_surface_width = tree.working_tree_width
-        self.setting_overlay_surface_height = tree.working_tree_height
-        self.setting_overlay_background_color = pygame.Color(100, 100, 100)
-        self.setting_overlay_surface = pygame.Surface((self.setting_overlay_surface_width, self.setting_overlay_surface_height))
-        self.setting_overlay_surface.fill(self.setting_overlay_background_color)
-        self.sub_font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', font_size)
+class SettingsOverlay(Window):
+    def __init__(self):
+        super().__init__(400, 500, 900, 0, pygame.Color(100,100,100), pygame.Color(255,255,255), 16)
         self.color_menu_open = False
+        self.overlay = False
 
-class TerminalScrollbar:
-    def __init__(self, term):
-        self.terminal_max_rows = term.terminal_height // (font.get_height() + line_spacing)
-        self.terminal_scroll_position = 0
-        self.terminal_scrollbar_width = 20
-        self.terminal_scrollbar_height = 35
-        self.terminal_scrollbar_x = term.terminal_width - self.terminal_scrollbar_width
-        self.terminal_scrollbar_y = 0
-
-class TreeScrollBar:
-    def __init__(self,tree):
-        # Define working tree scrollbar variable
-        self.working_tree_max_rows = tree.working_tree_height // (font.get_height() + line_spacing)
-        self.working_tree_scroll_position = 0
-        self.working_tree_scrollbar_width = 20
-        self.working_tree_scrollbar_height = 35
-        self.working_tree_scrollbar_x = tree.working_tree_width - self.working_tree_scrollbar_width
-        self.working_tree_scrollbar_y = 0
-
-class SettingsButton:
-    def __init__(self, terminal_width, working_tree_height, screen_width, screen_height):
-        self.settings_button_rect = pygame.Rect(terminal_width + 25, working_tree_height + 25, 50, 50)
-        self.settings_image = pygame.transform.scale(pygame.image.load("img/settings.png"), (40, 40))
-
-        self.ui_manager = pygame_gui.UIManager((screen_width, screen_height))
+        self.ui_manager = pygame_gui.UIManager((1300, 600))
 
         # custom background color
         self.background_color_picker_button = UIButton(
@@ -349,81 +385,39 @@ class SettingsButton:
             manager=self.ui_manager,
             anchors={'left': 'right', 'right': 'right', 'top': 'bottom', 'bottom': 'bottom'}
         )
+
+class HelpOverlay(Window):
+    def __init__(self):
+        super().__init__(400, 500, 900, 0, pygame.Color(255,255,255), pygame.Color(0,0,0), 16)
+        self.overlay = False
+
+class OptionsButtonsPanel(Window):
+    def __init__(self):
+        super().__init__(400, 100, 900, 600, pygame.Color(15,15,15), pygame.Color(0, 0, 0), 16)
+
+        self.settings_button_rect = pygame.Rect(925, 525, 50, 50)
+        self.settings_image = pygame.transform.scale(pygame.image.load("img/settings.png"), (40, 40))
+
+        self.help_button_rect = pygame.Rect(975, 525, 50, 50)
+        self.help_image = pygame.transform.scale(pygame.image.load("img/help-button.png"), (50, 50))
+
+
 def main():
     command_handler = CommandHandler()
     directory_manager = DirectoryManager()
-    term = Terminal()
-    tree = WorkingTree()
-    options = OptionsMenu(term, tree)
-    term_scroll = TerminalScrollbar(term)
-    tree_scroll = TreeScrollBar(tree)
 
+    # Define all windows
+    terminal = Terminal()
+    tree = TreeDiagram()
+    settings = SettingsOverlay()
+    helper = HelpOverlay()
+    options = OptionsButtonsPanel()
 
-    # ___________________________________________________
-    # |Main Terminal Window               | working-    |
-    # |900w x 600h                        | tree        |
-    # |                                   | 400w x 500h | 
-    # |                                   |             |
-    # |                                   |_____________|
-    # |                                   | Options     |
-    # |                                   | 400w x 100h |
-    # |___________________________________|_____________|  
-
-    global font_size, next_y, prev_lines, max_lines, line_spacing, master_folder_change
-
-
-
-    # Define help menu overlay variables
-    help_overlay_surface_width = working_tree_width
-    help_overlay_surface_height = working_tree_height
-    help_overlay_background_color = pygame.Color(255, 255, 255)
-    help_overlay_surface = pygame.Surface((help_overlay_surface_width, help_overlay_surface_height))
-    help_overlay_surface.fill(help_overlay_background_color)
-
-    # Define screen variable
-    screen_width = term.terminal_width + tree.working_tree_width
-    screen_height = term.terminal_height
+    # Define screen variables
+    screen_width = terminal.width + tree.width
+    screen_height = terminal.height
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Pseudo Terminal")
-
-    settings = SettingsButton(term.terminal_width, tree.working_tree_height, screen_width, screen_height)
-
-    # Define file path box
-    
-    current_path = getPathText()
-    
-    # Define text input box
-    input_box = pygame.Rect(0, 0, term.terminal_width, term.terminal_height)
-    input_text = ""
-
-    # Define cursor variables
-    cursor_surface = font.render("|", True, term.cursor_color)
-    cursor_visible = True
-    cursor_blink_time = 500  # Time between cursor blinks in milliseconds
-    cursor_blink_timer = 0
-    
-    # Define help menu overlay variables
-    help_overlay_surface_width = tree.working_tree_width
-    help_overlay_surface_height = tree.working_tree_height
-    help_overlay_background_color = pygame.Color(255, 255, 255)
-    help_overlay_surface = pygame.Surface((help_overlay_surface_width, help_overlay_surface_height))
-    help_overlay_surface.fill(help_overlay_background_color)
-    
-    # Define help menu button
-    help_button_rect = pygame.Rect(term.terminal_width + 75, tree.working_tree_height + 25, 50 ,50 )
-    help_image = pygame.image.load("img/help-button.png")
-    help_image = pygame.transform.scale(help_image, (50, 50))
-
-
-
-    # Define command history
-    command_history = []
-    path_history = []
-    max_history_length = 50
-    history_index = 0
-    setting_overlay = 0
-    help_overlay = 0
-
 
     clock = pygame.time.Clock()
 
@@ -443,112 +437,112 @@ def main():
             # If user clicks down
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # If the user clicked on the input box
-                if input_box.collidepoint(event.pos):
-                    terminal_active = True
+                if terminal.input_box.collidepoint(event.pos):
+                    terminal.active = True
                 else:
-                    terminal_active = False
+                    terminal.active = False
                 
-                if tree.working_tree_box.collidepoint(event.pos):
-                    working_tree_active = True
+                if tree.input_box.collidepoint(event.pos):
+                    tree.active = True
                 else:
-                    working_tree_active = False
+                    tree.active = False
 
                 # If the user clicked on settings button and the settings aren't up yet
-
-                if settings.settings_button_rect.collidepoint(event.pos) and setting_overlay == 0:
-                    setting_overlay = 1
+                if options.settings_button_rect.collidepoint(event.pos) and not settings.overlay:
+                    settings.overlay = True
 
                 # If the user clicked on settings button while settings are up
-                elif settings.settings_button_rect.collidepoint(event.pos) and setting_overlay == 1:
-                    setting_overlay = 0
+                elif options.settings_button_rect.collidepoint(event.pos) and settings.overlay:
+                    settings.overlay = False
                     
                 # If the user clicked on the help button and the help window isn't up yet
-                if help_button_rect.collidepoint(event.pos) and help_overlay == 0:
-                    help_overlay = 1
+                if options.help_button_rect.collidepoint(event.pos) and not helper.overlay:
+                    helper.overlay = True
 
+                # If the user clicked on help window button while help window is up
+                elif options.help_button_rect.collidepoint(event.pos) and helper.overlay:
+                    helper.overlay = False
 
-                # If the user clicked on help window button while help window isn't up
-                elif help_button_rect.collidepoint(event.pos) and help_overlay == 1:
-                    help_overlay = 0
-
-                elif event.button == 4 and len(prev_lines) > term_scroll.terminal_max_rows and terminal_active:
-                    term_scroll.terminal_scroll_position = max(0, term_scroll.terminal_scroll_position - 1)
+                elif event.button == 4 and len(terminal.prev_lines) > terminal.max_rows_of_text and terminal.active:
+                    terminal.scroll_bar.scroll_position = max(0, terminal.scroll_bar.scroll_position - 1)
                 
-                elif event.button == 5 and len(prev_lines) > term_scroll.terminal_max_rows and terminal_active:
-                    term_scroll.terminal_scroll_position = min(len(prev_lines) - term_scroll.terminal_max_rows, term_scroll.terminal_scroll_position + 1)
+                elif event.button == 5 and len(terminal.prev_lines) > terminal.max_rows_of_text and terminal.active:
+                    terminal.scroll_bar.scroll_position = min(len(terminal.prev_lines) - terminal.max_rows_of_text + 1, terminal.scroll_bar.scroll_position + 1)
 
+                elif event.button == 4 and len(directory_manager.directory_lines) > tree.max_rows_of_text and tree.active:
+                    tree.scroll_bar.scroll_position = max(0, tree.scroll_bar.scroll_position - 1)
                 
-                elif event.button == 4 and len(directory_manager.directory_lines) > tree_scroll.working_tree_max_rows and working_tree_active:
-                    tree_scroll.working_tree_scroll_position = max(0, tree_scroll.working_tree_scroll_position - 1)
-                
-                elif event.button == 5 and len(directory_manager.directory_lines) > tree_scroll.working_tree_max_rows and working_tree_active:
-                    tree_scroll.working_tree_scroll_position = min(len(directory_manager.directory_lines) - tree_scroll.working_tree_max_rows, tree_scroll.working_tree_scroll_position + 1)
+                elif event.button == 5 and len(directory_manager.directory_lines) > tree.max_rows_of_text and tree.active:
+                    tree.scroll_bar.scroll_position = min(len(directory_manager.directory_lines) - tree.max_rows_of_text + 1, tree.scroll_bar.scroll_position + 1)
 
 
             # If the user entered a key
             elif event.type == pygame.KEYDOWN:
-                if len(prev_lines) > term_scroll.terminal_max_rows:
-                    terminal_scroll_position = len(prev_lines) - term_scroll.terminal_max_rows
+                if len(terminal.prev_lines) > terminal.max_rows_of_text:
+                    terminal.scroll_bar.scroll_position = (len(terminal.prev_lines) - terminal.max_rows_of_text) + 1
                 # If the user has clicked onto the terminal window
-                if term.terminal_active:
+                if terminal.active:
                     # If user hits 'enter' key
                     if event.key == pygame.K_RETURN:
                         # Update command history
-                        appendTerminalText(current_path + input_text)
+                        terminal.appendTerminalText(current_path + terminal.text)
 
-                        command_history.append(input_text)
-                        path_history.append(current_path)
+                        terminal.command_history.append(terminal.text)
+                        terminal.path_history.append(current_path)
 
                         # Process the user's input
-                        command_handler.callCommand(input_text)
+                        command_handler.callCommand(terminal)
 
-                        if len(command_history) > max_history_length:
-                            command_history.pop(0)
-                            path_history.pop(0)
+                        if len(terminal.command_history) > terminal.max_history_length:
+                            terminal.command_history.pop(0)
+                            terminal.path_history.pop(0)
                         
-                        history_index = len(command_history)
+                        terminal.setHistoryIndex(len(terminal.command_history))
 
-                        if len(prev_lines) > max_lines:
-                            prev_lines.pop(0)
+                        if len(terminal.prev_lines) > terminal.max_prev_lines:
+                            terminal.prev_lines.pop(0)
 
                         # Reset user input and go to next line
-                        input_text = ""
+                        terminal.setText("")
+
+                        if len(terminal.prev_lines) > terminal.max_rows_of_text:
+                            terminal.scroll_bar.scroll_position = (len(terminal.prev_lines) - terminal.max_rows_of_text) + 1
 
                     # If user hits 'backspace' key
                     elif event.key == pygame.K_BACKSPACE:
-                        input_text = input_text[:-1]
+                        terminal.setText(terminal.text[:-1])
 
                     # If user hits the up arrow
                     elif event.key == pygame.K_UP:
                         # Cycle to older commands
-                        if history_index > 0:
-                            history_index -= 1
-                            input_text = command_history[history_index]
-                            current_path = path_history[history_index]
+                        if terminal.history_index > 0:
+                            terminal.setHistoryIndex(terminal.history_index - 1)
+                            terminal.setText(terminal.command_history[terminal.history_index])
+                            current_path = terminal.path_history[terminal.history_index]
 
                     # If user hits the down arrow
                     elif event.key == pygame.K_DOWN:
                         # Cycle to newer commands
-                        if history_index < len(command_history) - 1:
-                            history_index += 1
-                            input_text = command_history[history_index]
-                            current_path = path_history[history_index]
+                        if terminal.history_index < len(terminal.command_history) - 1:
+                            terminal.setHistoryIndex(terminal.history_index + 1)
+                            terminal.setText(terminal.command_history[terminal.history_index])
+                            current_path = terminal.path_history[terminal.history_index]
 
                     # Else: add key to end of user input
                     else:
-                        input_text += event.unicode  
+                        terminal.setText(terminal.text + event.unicode)
 
 
             # If user clicks the button to edit background color
             elif event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == settings.background_color_picker_button:
-                color_menu_open = True
+                settings.color_menu_open = True
                 background_color_picker = UIColourPickerDialog(pygame.Rect(905, 50, 390, 390),
                                                 settings.ui_manager,
                                                 window_title="Change Background Color",
-                                                initial_colour=term.terminal_background_color)
+                                                initial_colour=terminal.background_color)
                 
                 if event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED:
-                    terminal_background_color = event.colour
+                    terminal.setBackgroundColor(event.colour)
 
             # If user clicks the button to edit text color
             elif event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == settings.text_color_picker_button:
@@ -556,41 +550,30 @@ def main():
                 text_color_picker = UIColourPickerDialog(pygame.Rect(905, 50, 390, 390),
                                                 settings.ui_manager,
                                                 window_title="Change Text Color",
-                                                initial_colour=term.terminal_text_color)
+                                                initial_colour=terminal.text_color)
                 
                 if event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED:
-                    terminal_text_color = event.colour
+                    terminal.setTextColor(event.colour)
 
             # If user exits out of color menu
             elif event.type == pygame_gui.UI_WINDOW_CLOSE:
-                color_menu_open = False
+                settings.color_menu_open = False
                 settings.background_color_picker_button.enable()
                 background_color_picker = None
                 settings.text_color_picker_button.enable()
                 text_color_picker = None
 
             settings.ui_manager.process_events(event)
-
-        # Draw Options Window  
-
-        options.options_window.fill(options.options_background_color)
-        screen.blit(options.options_window, (term.terminal_width, tree.working_tree_height))
-        pygame.draw.rect(screen,options.options_background_color, settings.settings_button_rect)
-        screen.blit(settings.settings_image, (settings.settings_button_rect.centerx - 20, settings.settings_button_rect.centery - 20))
-        pygame.draw.rect(screen,options.options_background_color, help_button_rect)
-
-
-        screen.blit(help_image, (help_button_rect.centerx - 25, help_button_rect.centery - 25))
             
         # If settings is enable
-        if setting_overlay == 1:
+        if settings.overlay:
             # Draw menu overlay
-            help_overlay = 0
+            helper.overlay = False
 
-            options.setting_overlay_surface.fill(options.setting_overlay_background_color)
-            screen.blit(options.setting_overlay_surface, (term.terminal_width, 0))
+            settings.surface.fill(settings.background_color)
+            screen.blit(settings.surface, (terminal.width, 0))
 
-            if options.color_menu_open:
+            if settings.color_menu_open:
                 settings.background_color_picker_button.disable()
                 settings.text_color_picker_button.disable()
 
@@ -601,106 +584,109 @@ def main():
             settings.ui_manager.update(time_delta)
             settings.ui_manager.draw_ui(screen)
             
-        elif help_overlay == 1:
+        elif helper.overlay == 1:
             # Draw menu overlay
-            setting_overlay = 0
-            help_overlay_surface.fill(help_overlay_background_color)
-            screen.blit(help_overlay_surface, (term.terminal_width, 0))
-
-            # ui_manager.update(time_delta)
-            # ui_manager.draw_ui(screen) 
+            settings.background_color_picker_button.disable()
+            settings.text_color_picker_button.disable()
+            helper.surface.fill(helper.background_color)
+            screen.blit(helper.surface, (terminal.width, 0))
         
         else:
             # Get current directory information
             settings.background_color_picker_button.disable()
             settings.text_color_picker_button.disable()
-            tree.working_tree_window.fill(tree.working_tree_background_color)
+            tree.surface.fill(tree.background_color)
 
             # Draw working tree scroll bar if nec. 
-            if (len(directory_manager.directory_lines) > tree_scroll.working_tree_max_rows):
-                tree_scroll.working_tree_scrollbar_y = int(tree.working_tree_height*((tree_scroll.working_tree_scroll_position) / (len(directory_manager.directory_lines) - tree_scroll.working_tree_max_rows)))
-                if (tree_scroll.working_tree_scroll_position == (len(directory_manager.directory_lines) - tree_scroll.working_tree_max_rows)):
-                    tree_scroll.working_tree_scrollbar_y = tree.working_tree_height - tree_scroll.working_tree_scrollbar_height
-                pygame.draw.rect(tree.working_tree_window, (20, 120, 220), (tree_scroll.working_tree_scrollbar_x, tree_scroll.working_tree_scrollbar_y, tree_scroll.working_tree_scrollbar_width, tree_scroll.working_tree_scrollbar_height))
+            if (len(directory_manager.directory_lines) > tree.max_rows_of_text):
+                tree.scroll_bar.setYcord(int(tree.height*((tree.scroll_bar.scroll_position) / (len(directory_manager.directory_lines) - tree.max_rows_of_text))))
+                if (tree.scroll_bar.scroll_position == (len(directory_manager.directory_lines) - tree.max_rows_of_text)):
+                    tree.scroll_bar.setYcord(tree.height - tree.scroll_bar.height)
+                pygame.draw.rect(tree.surface, (20, 120, 220), (tree.scroll_bar.x_cord, tree.scroll_bar.y_cord, tree.scroll_bar.width, tree.scroll_bar.height))
             #updates directory tree
             directory_manager.update_directory_lines()
 
-            for i in range(tree_scroll.working_tree_scroll_position, min(len(directory_manager.directory_lines), tree_scroll.working_tree_scroll_position + tree_scroll.working_tree_max_rows)):
-                tree_text = options.sub_font.render(directory_manager.directory_lines[i], True, tree.working_tree_text_color)
-                y = (i - tree_scroll.working_tree_scroll_position) * (options.sub_font.get_height() + line_spacing)
-                tree.working_tree_window.blit(tree_text, (10, y))
+            for i in range(tree.scroll_bar.scroll_position, min(len(directory_manager.directory_lines), tree.scroll_bar.scroll_position + tree.max_rows_of_text)):
+                #tree.setText()
+                tree_text = options.font.render(directory_manager.directory_lines[i], True, tree.text_color)
+                tree.setNextYforPrint((i - tree.scroll_bar.scroll_position) * (tree.font.get_height() + tree.line_spacing))
+                tree.surface.blit(tree_text, (10, tree.next_y_for_print))
 
             # Draw current directory
-            screen.blit(tree.working_tree_window, (term.terminal_width, 0))
+            screen.blit(tree.surface, (terminal.width, 0))
             settings.ui_manager.update(time_delta)
-
         # Get Terminal Ready to be drawn
 
         # Fill in the terminal background
-        term.terminal_window.fill(term.terminal_background_color)
+        terminal.surface.fill(terminal.background_color)
 
         # Update the path text
         current_path = file_manager.get_path_text()
-        #terminal_window.blit(path_surface, (10, 10))
 
         # Draw Terminal Scroll bar
-        if (len(prev_lines) > term_scroll.terminal_max_rows):
-            terminal_scrollbar_y = int(term.terminal_height*((term_scroll.terminal_scroll_position) / (len(prev_lines) - term_scroll.terminal_max_rows)))
-            if (term_scroll.terminal_scroll_position == (len(prev_lines) - term_scroll.terminal_max_rows)):
-                term_scroll.terminal_scrollbar_y = term.terminal_height - term_scroll.terminal_scrollbar_height
-            pygame.draw.rect(term.terminal_window, (20, 120, 220), (term_scroll.terminal_scrollbar_x, term_scroll.terminal_scrollbar_y, term_scroll.terminal_scrollbar_width, term_scroll.terminal_scrollbar_height))
+        if (len(terminal.prev_lines) > terminal.max_rows_of_text):
+            terminal.scroll_bar.setYcord(int(terminal.height*((terminal.scroll_bar.scroll_position) / (len(terminal.prev_lines) - terminal.max_rows_of_text))))
+            if (terminal.scroll_bar.scroll_position == (len(terminal.prev_lines) - terminal.max_rows_of_text)):
+                terminal.scroll_bar.setYcord(terminal.height - terminal.scroll_bar.height)
+            pygame.draw.rect(terminal.surface, (20, 120, 220), (terminal.scroll_bar.x_cord, terminal.scroll_bar.y_cord, terminal.scroll_bar.width, terminal.scroll_bar.height))
 
         # Draw the current text
-        text_surface = font.render(current_path + input_text, True, term.terminal_text_color)
+        text_surface = terminal.font.render(current_path + terminal.text, True, terminal.text_color)
         
-        if len(prev_lines) == 0:
-            term.terminal_window.blit(text_surface, (10, 0))
+        if len(terminal.prev_lines) == 0:
+            terminal.surface.blit(text_surface, (10, 0))
 
         ########## TODO: FIX BUG WITH SCROLL HERE!!!
 
-
-        elif len(prev_lines) > term_scroll.terminal_max_rows:
-            term.terminal_window.blit(text_surface, (10, term.terminal_height - font.get_height() - line_spacing))
-
-
-            # Draw the previous commands
-            for i in reversed(range(term_scroll.terminal_scroll_position + 1, len(prev_lines))):
-                previous_surface = font.render(prev_lines[i], True, term.terminal_text_color)
-                next_y = (i - term_scroll.terminal_scroll_position - 1) * (font.get_height() + line_spacing)
-                term.terminal_window.blit(previous_surface, (10, next_y))
+        elif len(terminal.prev_lines) > terminal.max_rows_of_text:
+            for i in range(terminal.scroll_bar.scroll_position, min(len(terminal.prev_lines), terminal.scroll_bar.scroll_position + terminal.max_rows_of_text)):
+                previous_surface = terminal.font.render(terminal.prev_lines[i], True, terminal.text_color)
+                terminal.setNextYforPrint((i - terminal.scroll_bar.scroll_position) * (terminal.font.get_height() + terminal.line_spacing))
+                terminal.surface.blit(previous_surface, (10, terminal.next_y_for_print))
+            
+            terminal.surface.blit(text_surface, (10, terminal.next_y_for_print + terminal.font.get_height() + terminal.line_spacing))
 
         else:
             # Draw the previous commands
-            for i in range(term_scroll.terminal_scroll_position, min(len(prev_lines), term_scroll.terminal_scroll_position + term_scroll.terminal_max_rows)):
-                previous_surface = font.render(prev_lines[i], True, term.terminal_text_color)
-                next_y = (i - term_scroll.terminal_scroll_position) * (font.get_height() + line_spacing)
-                term.terminal_window.blit(previous_surface, (10, next_y))
+            for i in range(terminal.scroll_bar.scroll_position, min(len(terminal.prev_lines), terminal.scroll_bar.scroll_position + terminal.max_rows_of_text)):
+                previous_surface = terminal.font.render(terminal.prev_lines[i], True, terminal.text_color)
+                terminal.setNextYforPrint((i - terminal.scroll_bar.scroll_position) * (terminal.font.get_height() + terminal.line_spacing))
+                terminal.surface.blit(previous_surface, (10, terminal.next_y_for_print))
             
-            term.terminal_window.blit(text_surface, (10, next_y + font.get_height() + line_spacing))
-
+            terminal.surface.blit(text_surface, (10, terminal.next_y_for_print + terminal.font.get_height() + terminal.line_spacing))
 
         # If the user has clicked onto the terminal
-        if term.terminal_active:
+        if terminal.active:
             # Adjust cursor visibility
-            if pygame.time.get_ticks() - cursor_blink_timer > cursor_blink_time:
-                cursor_blink_timer = pygame.time.get_ticks()
-                cursor_visible = not cursor_visible
+            if pygame.time.get_ticks() - terminal.cursor_blink_timer > terminal.cursor_blink_time:
+                terminal.cursor_blink_timer = pygame.time.get_ticks()
+                terminal.cursor_visible = not terminal.cursor_visible
 
             # Draw Cursor
-            if cursor_visible:
-                cursor_pos = text_surface.get_width() + line_spacing
+            if terminal.cursor_visible:
+                terminal.cursor_pos = text_surface.get_width() + terminal.line_spacing
                 
-                if len(prev_lines) == 0:
-                    term.terminal_window.blit(cursor_surface, (cursor_pos, next_y))
+                if len(terminal.prev_lines) == 0:
+                    terminal.surface.blit(terminal.cursor_surface, (terminal.cursor_pos, terminal.next_y_for_print))
 
-                elif len(prev_lines) > term_scroll.terminal_max_rows - 1:
-                    term.terminal_window.blit(cursor_surface, (cursor_pos, term.terminal_height - font.get_height() - line_spacing))
+                elif len(terminal.prev_lines) > terminal.max_rows_of_text - 1:
+                    terminal.surface.blit(terminal.cursor_surface, (terminal.cursor_pos, terminal.height - terminal.font.get_height() - terminal.line_spacing))
                 else:
-                    term.terminal_window.blit(cursor_surface, (cursor_pos, next_y + font.get_height() + line_spacing))
+                    terminal.surface.blit(terminal.cursor_surface, (terminal.cursor_pos, terminal.next_y_for_print + terminal.font.get_height() + terminal.line_spacing))
 
         #Draw Terminal Window
-        screen.blit(term.terminal_window, (0,0))
+        screen.blit(terminal.surface, (0,0))
+
+        # Draw Options Window  
+
+        options.surface.fill(options.background_color)
+        screen.blit(options.surface, (terminal.width, tree.height))
         
+        pygame.draw.rect(screen, options.background_color, options.settings_button_rect)
+        screen.blit(options.settings_image, (options.settings_button_rect.centerx - 20, options.settings_button_rect.centery - 20))
+        pygame.draw.rect(screen, options.background_color, options.help_button_rect)
+        screen.blit(options.help_image, (options.help_button_rect.centerx - 25, options.help_button_rect.centery - 25))
+
         # Update the display
         pygame.display.update()
 

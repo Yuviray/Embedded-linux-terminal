@@ -75,10 +75,12 @@ class FileManagement:
     def list_files(self, startpath):
         text = "Directory Tree\n\n"
         for root, dirs, files in os.walk(startpath):
+            dirs[:] = [d for d in dirs if not d.startswith('.')]
             level = root.replace(startpath, '').count(os.sep)
             indent = ' ' * 4 * (level)
             text += '{}{}/\n'.format(indent, os.path.basename(root))
             subindent = ' ' * 4 * (level + 1)
+            files = [f for f in files if not f.startswith('.')]
             for f in files:
                 if not f.startswith('.'):
                     text += '{}{}\n'.format(subindent, f)
