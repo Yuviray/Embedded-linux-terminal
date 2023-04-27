@@ -1,0 +1,6 @@
+ipconfig Command
+-"Internet Protocol Configuration"
+-displays 
+    - TCP/IP network values
+    - Dynamic Host Configuration Protocol (DHCP) 
+    - Domain Name System (DNS) settings.

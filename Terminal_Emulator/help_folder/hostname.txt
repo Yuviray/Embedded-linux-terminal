@@ -1,0 +1,2 @@
+hostname Command:
+- displays hostname of current system
