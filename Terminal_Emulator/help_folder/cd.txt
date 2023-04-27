@@ -1,6 +1,5 @@
 Change Directory
 1 Parameter
-string
 the name of a directory
 changes the current directory to the specified directory
 "cd directory_name"

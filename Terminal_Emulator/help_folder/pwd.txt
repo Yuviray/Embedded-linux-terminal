@@ -1,0 +1,6 @@
+Print Working Directory
+0 Parameters
+n/a
+Displays the current working directory
+"pwd"
+n/a

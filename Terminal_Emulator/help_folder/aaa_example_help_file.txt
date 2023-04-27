@@ -1,0 +1,6 @@
+Name of command
+Number of parameters
+What the parameter(s) represent
+Description of the command
+Example of command being used
+Any notes

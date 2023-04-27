@@ -1,0 +1,6 @@
+Global Regular Expression Print
+2 Parameters
+A string to search for, a file to search through
+Searches a file for the given string and displays where string is found
+"grep pattern file_name"
+"grep" is a sort-of search, for the files

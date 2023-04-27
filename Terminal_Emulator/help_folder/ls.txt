@@ -1,7 +1,6 @@
 List
-0 Parameters
-n/a
+0 Parameterss
 n/a
 lists the contents of the current directory
 "ls"
-"ls" will list the date and time that each file was last edited
+"ls" will also list the date and time that each file was last edited
