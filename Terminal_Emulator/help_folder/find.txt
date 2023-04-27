@@ -1,0 +1,13 @@
+find Command:
+- Searches for directories or files
+- Three arguments:
+    - find Command
+    - name
+    - type
+        - d - directories
+        - f - files
+- example:
+    find game.py f
+        - looks for a file 
+    find game.py
+        - returns directories and files

@@ -1,0 +1,8 @@
+ps Command:
+-lists information about all 
+ running processes on the system,
+ including the user who owns the
+ process, the process ID (PID), 
+ the percentage of CPU usage, 
+ the percentage of memory usage, 
+ and other details about the process.

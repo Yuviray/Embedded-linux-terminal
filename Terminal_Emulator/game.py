@@ -156,19 +156,22 @@ class CommandHandler:
             if len(command) > 1:
                 if len(command) > 2 :
                     try:
-                        self.file_manager.head(command[1], command[2])
+                        temp = self.file_manager.head(command[1], command[2])
+                        #terminal.appendTerminalText(temp)
                     except:
                         terminal.appendTerminalText("Error: Please enter a valid file name.")
                 else:
                     try:
-                        self.file_manager.head(command[1], 10)
+                        temp = self.file_manager.head(command[1], 10)
+                        #terminal.appendTerminalText(temp)
                     except:
                         terminal.appendTerminalText("Error: Please enter a valid file name.")
             else:
                 terminal.appendTerminalText("Error: Please enter a valid file name.")
 
         elif command[0] == "df":
-            self.file_manager.df()
+            temp = self.file_manager.df()
+            terminal.appendTerminalText(temp)
 
         elif command[0] == "wget ":
             if len(command) > 1:
@@ -456,9 +459,9 @@ class HelpOverlay:
         self.term = terminal
         self.overlay = False  
 
-        self.dropdown = DropDown(925, 40, 350, 30, ['ls', 'cd', 'echo','date',
+        self.dropdown = DropDown(925, 40, 350, 30, ['ls', 'cd', 'find','echo','date',
                                                    'whoami','uname','hostname',
-                                                   'ping', 'top', 'ipconfig'], (0, 0, 0), font.get_height(), (200, 200, 200), font_obj=font, callback=lambda option: self.display_text_file(option))
+                                                   'ping','ps', 'top', 'ipconfig'], (0, 0, 0), font.get_height(), (200, 200, 200), font_obj=font, callback=lambda option: self.display_text_file(option))
 
     def display_text(self, content):
         self.text_surface.fill(self.background_color)
