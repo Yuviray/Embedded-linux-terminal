@@ -1,5 +1,5 @@
 List
-0 Parameterss
+0 Parameters
 n/a
 lists the contents of the current directory
 "ls"

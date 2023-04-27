@@ -1,0 +1,8 @@
+ping Command
+-two arguments
+    - ping Command
+    - hostname/ip address
+-displays 
+    - test basic network connectivity 
+-Ex
+    - ping example.com
