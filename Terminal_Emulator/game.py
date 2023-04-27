@@ -326,15 +326,47 @@ class ScrollBar():
         self.y_cord = y_val
 
 class DropDown:
-    def __init__(self, x, y, width, height, options, font_color, background_color, callback=None):
-        super().__init__(width, height, x, y, background_color, font_color, 16)
-        
+    def __init__(self, x, y, width, height, options, font_color, font_size, background_color, font_obj=None, callback=None):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
         self.options = options
+        self.font_color = font_color
+        self.font_size = font_size
+        self.background_color = background_color
         self.active_option = options[0]
-        self.active = False
+        self.is_active = False
+        self.font = font_obj if font_obj else pygame.font.Font(None, font_size)
         self.option_rects = []
         self.callback = callback
-        self.main_rect = pygame.Rect(self.x, self.y, self.width, self.height) 
+
+        self.main_rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
+    def draw(self, window):
+        pygame.draw.rect(window, self.background_color, (self.x, self.y, self.width, self.height))
+        text = self.font.render(self.active_option, True, self.font_color)
+        window.blit(text, (self.x + 5, self.y + 5))
+
+        if self.is_active:
+            for index, option in enumerate(self.options):
+                pygame.draw.rect(window, self.background_color, (self.x, self.y + (index + 1) * self.height, self.width, self.height))
+                text = self.font.render(option, True, self.font_color)
+                window.blit(text, (self.x + 5, self.y + (index + 1) * self.height + 5))
+                self.option_rects.append(pygame.Rect(self.x, self.y + (index + 1) * self.height, self.width, self.height))
+
+    def handle_event(self, event):
+        if not self.is_active:
+            if self.main_rect.collidepoint(event.pos):
+                self.is_active = True
+        else:
+            for index, rect in enumerate(self.option_rects):
+                if rect.collidepoint(event.pos):
+                    self.active_option = self.options[index]
+                    if self.callback:
+                        self.callback(self.active_option)
+                    self.is_active = False
+                    break
 
 class Terminal(Window):
     def __init__(self):
@@ -395,10 +427,71 @@ class SettingsOverlay(Window):
             anchors={'left': 'right', 'right': 'right', 'top': 'bottom', 'bottom': 'bottom'}
         )
 
-class HelpOverlay(Window):
-    def __init__(self):
-        super().__init__(400, 500, 900, 0, pygame.Color(15,15,15), pygame.Color(0,0,0), 16)
-        self.overlay = False
+class HelpOverlay:
+    def __init__(self, tree, terminal, font, options):
+        self.width = tree.width
+        self.height = tree.height
+        self.background_color = pygame.Color(8,1,20)
+        self.surface = pygame.Surface((self.width, self.height))
+        self.surface.fill(self.background_color)
+        self.text_surface = pygame.Surface((self.width, self.height))
+
+        self.displayed_option = None
+        self.font = font
+        self.font_color = pygame.Color(255,255,255)
+        self.help_text = None
+        self.term = terminal
+        self.overlay = False  
+
+        self.dropdown = DropDown(925, 40, 350, 30, ['ls', 'cd', 'Option 3'], (0, 0, 0), font.get_height(), (200, 200, 200), font_obj=font, callback=lambda option: self.display_text_file(option))
+
+    def display_text(self, content):
+        self.text_surface.fill(self.background_color)
+        text = self.font.render(content, True, self.font_color)
+        self.text_surface.blit(text, (10, 50))
+
+    def draw(self, window):
+        window.blit(self.surface, (0, 0))
+        window.blit(self.text_surface, (0, 0))
+        self.dropdown.draw(window)
+
+    def update(self, screen, help_overlay):
+        if self.help_text:
+            screen.blit(self.help_text, (self.term.width + 15, 80))
+        if help_overlay == 1:
+            self.dropdown.draw(screen)
+
+    def hide_text(self):
+        self.text_surface.fill
+
+    def display_text_file(self, option, max_line_length=40):
+        if self.displayed_option == option:
+            self.help_text = None
+            self.displayed_option = None
+        else:
+            file_path = f'help_folder/{option}.txt'
+            with open(file_path, 'r') as file:
+                content = file.read()
+
+            # Split the text into lines and chunks
+            lines = content.split('\n')
+            line_chunks = []
+            max_line_length = 42
+            for line in lines:
+                chunks = [line[i:i + max_line_length] for i in range(0, len(line), max_line_length)]
+                line_chunks.extend(chunks)
+
+            # Render the text onto the help surface with line breaks and maximum line length
+            self.help_text = pygame.Surface((self.width, self.height))
+            self.help_text.fill(self.background_color)
+            y = 10
+            for line in line_chunks:
+                text = self.font.render(line, True, self.font_color)
+                self.help_text.blit(text, (10, y))
+                y += self.font.get_height() + 5
+
+            self.displayed_option = option
+
 
 class OptionsButtonsPanel(Window):
     def __init__(self):
@@ -419,8 +512,9 @@ def main():
     terminal = Terminal()
     tree = TreeDiagram()
     settings = SettingsOverlay()
-    helper = HelpOverlay()
+   
     options = OptionsButtonsPanel()
+    helper = HelpOverlay(tree, terminal, terminal.font, options)
 
     # Define screen variables
     screen_width = terminal.width + tree.width
@@ -471,6 +565,9 @@ def main():
                 # If the user clicked on help window button while help window is up
                 elif options.help_button_rect.collidepoint(event.pos) and helper.overlay:
                     helper.overlay = False
+                    
+                if helper.overlay == 1:
+                    helper.dropdown.handle_event(event)
 
                 elif event.button == 4 and len(terminal.prev_lines) > terminal.max_rows_of_text and terminal.active:
                     terminal.scroll_bar.scroll_position = max(0, terminal.scroll_bar.scroll_position - 1)
@@ -599,6 +696,7 @@ def main():
             settings.text_color_picker_button.disable()
             helper.surface.fill(helper.background_color)
             screen.blit(helper.surface, (terminal.width, 0))
+            helper.update(screen, helper.overlay)
         
         else:
             # Get current directory information

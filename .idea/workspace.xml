@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="cc485255-c390-4e20-95af-cc7a3908cf0c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Terminal_Emulator/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/Terminal_Emulator/functions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Terminal_Emulator/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Terminal_Emulator/game.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -81,6 +80,7 @@
       <workItem from="1682548477354" duration="86000" />
       <workItem from="1682548568758" duration="123000" />
       <workItem from="1682548712559" duration="2821000" />
+      <workItem from="1682602953322" duration="841000" />
     </task>
     <task id="LOCAL-00001" summary="fixed cd to enter directory now">
       <created>1680639038488</created>
