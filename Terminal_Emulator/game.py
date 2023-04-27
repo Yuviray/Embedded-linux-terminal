@@ -459,7 +459,10 @@ class HelpOverlay:
         self.term = terminal
         self.overlay = False  
 
-        self.dropdown = DropDown(925, 40, 350, 30, ['ls', 'cd', 'find','echo','date',
+        self.dropdown = DropDown(925, 40, 350, 30, ['ls', 'cd', 'cat','cp','touch',
+                                                    'mkdir','mv','rm','rmdir',
+                                                    'chmod','pwd',
+                                                    'find','echo','date',
                                                    'whoami','uname','hostname',
                                                    'ping','ps', 'top', 'ipconfig'], (0, 0, 0), font.get_height(), (200, 200, 200), font_obj=font, callback=lambda option: self.display_text_file(option))
 
