@@ -306,7 +306,6 @@ class Window:
     def setSurface(self, surf):
         self.surface = surf
 
-
 class ScrollBar():
     def __init__(self, scroll_pos, wid, heit, x_val, y_val):
         self.scroll_position = scroll_pos
@@ -326,6 +325,16 @@ class ScrollBar():
     def setYcord(self, y_val):
         self.y_cord = y_val
 
+class DropDown:
+    def __init__(self, x, y, width, height, options, font_color, background_color, callback=None):
+        super().__init__(width, height, x, y, background_color, font_color, 16)
+        
+        self.options = options
+        self.active_option = options[0]
+        self.active = False
+        self.option_rects = []
+        self.callback = callback
+        self.main_rect = pygame.Rect(self.x, self.y, self.width, self.height) 
 
 class Terminal(Window):
     def __init__(self):
@@ -388,7 +397,7 @@ class SettingsOverlay(Window):
 
 class HelpOverlay(Window):
     def __init__(self):
-        super().__init__(400, 500, 900, 0, pygame.Color(255,255,255), pygame.Color(0,0,0), 16)
+        super().__init__(400, 500, 900, 0, pygame.Color(15,15,15), pygame.Color(0,0,0), 16)
         self.overlay = False
 
 class OptionsButtonsPanel(Window):
