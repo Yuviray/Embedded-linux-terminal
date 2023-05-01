@@ -1,2 +1,4 @@
-whoami Command:
-    - displays username of username
+Show username
+0 Parameters
+displays username of user
+"whoami"

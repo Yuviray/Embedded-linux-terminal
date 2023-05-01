@@ -15,7 +15,8 @@ class TestCommandLine(unittest.TestCase):
     def test_cd_command_with_valid_path(self):
         with patch('os.chdir') as mock_chdir:
             file_manager.cd("test_dir")
-            mock_chdir.assert_called_once_with('/Users/yuvaneshrajamani/PycharmProjects/Embedded-linux-terminal/Terminal_Emulator/test_dir') # replace with expected path
+            mock_chdir.assert_called_once_with('/Users/yuvaneshrajamani/PycharmProjects/Embedded-linux-terminal/Terminal_Emulator/test_dir') 
+
     
     def test_ls_command(self):
         with open("test.txt", "w") as f:
@@ -160,19 +161,24 @@ class TestCommandLine(unittest.TestCase):
             mock_print.assert_any_call("/               1      0      0")
 
     def test_find(self):
-        test_dir = "test_dir"
-        os.makedirs(os.path.join(test_dir, "subdir"))
+        test_dir = "test_dir2"
+        if not os.path.exists(test_dir):
+            os.makedirs(test_dir)
+        if not os.path.exists(os.path.join(test_dir, "subdir")):
+            os.makedirs(os.path.join(test_dir, "subdir"))
         with open(os.path.join(test_dir, "file1.txt"), "w") as f:
             f.write("test")
         with open(os.path.join(test_dir, "subdir", "file2.txt"), "w") as f:
             f.write("test")
-        result = self.file_manager.find(test_dir, name="file1.txt")
+        result = self.file_manager.find(test_dir, "file1.txt")
         self.assertEqual(len(result), 1)
         self.assertIn(os.path.join(test_dir, "file1.txt"), result)
-        result = self.file_manager.find(test_dir, name="file2.txt", type='f')
+        result = self.file_manager.find(test_dir, "file2.txt", 'f')
         self.assertEqual(len(result), 1)
         self.assertIn(os.path.join(test_dir, "subdir", "file2.txt"), result)
         shutil.rmtree(test_dir)
+
+
     
     def test_touch(self):
         test_file = "test_file.txt"

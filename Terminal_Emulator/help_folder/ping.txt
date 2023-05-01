@@ -1,8 +1,6 @@
-ping Command
--two arguments
-    - ping Command
-    - hostname/ip address
--displays 
-    - test basic network connectivity 
--Ex
-    - ping example.com
+Get network ping
+1 Parameter
+hostname/ip address
+displays 
+- test basic network connectivity 
+"ping example.com"

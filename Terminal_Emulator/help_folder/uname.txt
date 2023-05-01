@@ -1,5 +1,7 @@
-uname Command:
-    - Displays informantion on
-        - Operating system
-        - hardware
-        - kernal
+Get system information
+0 Parameters
+Displays information on
+- Operating system
+- hardware
+- kernal
+"uname"
