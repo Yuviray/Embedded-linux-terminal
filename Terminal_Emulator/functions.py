@@ -49,6 +49,8 @@ class FileManagement:
 
 
     def grep(self, pattern, file_name):
+        if not os.path.exists(file_name):
+            return []
         with open(file_name, 'r') as file:
             matching_lines = [line for line in file if pattern in line]
         return matching_lines
@@ -92,10 +94,11 @@ class FileManagement:
         print("Filesystem      1K-blocks    Used      Available")
         print(f"/               {total // 1024}      {used // 1024}      {free // 1024}")
 
-    def find(self, startpath, name=None, type=None):
+    def find(self, name=None, type=None):
+        startpath = os.getcwd()
         result = []
         for root, dirs, files in os.walk(startpath):
-            if name:
+            if name is not None:
                 if type == 'd':
                     for dirname in dirs:
                         if name == dirname:
@@ -115,6 +118,7 @@ class FileManagement:
                 result.extend(os.path.join(root, dirname) for dirname in dirs)
                 result.extend(os.path.join(root, filename) for filename in files)
         return result
+
 
     def echo(self, *args, **kwargs):
         sep = kwargs.get('sep', ' ')

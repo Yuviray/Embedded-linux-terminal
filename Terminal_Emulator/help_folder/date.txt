@@ -1,2 +1,4 @@
-date Command:
-    -displays the current date
+Get date
+0 Parameters
+displays the date
+"date"

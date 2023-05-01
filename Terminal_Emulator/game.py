@@ -134,7 +134,8 @@ class CommandHandler:
             if len(command) > 1:
                 if len(command) < 3:
                     try:
-                        self.file_manager.chmod(command[1], command[2])
+                        temp = self.file_manager.chmod(command[1], command[2])
+                        terminal.appendTerminalText(temp)
                     except:
                         terminal.appendTerminalText("Error: Please enter a valid file name.")
 
@@ -143,14 +144,16 @@ class CommandHandler:
 
         elif command[0] == "grep":
             if len(command) > 1:
-                if len(command) < 3:
-                    try:
-                        self.file_manager.grep(command[1], command[2])
-                    except:
-                        terminal.appendTerminalText("Error: Please enter a valid file name.")
-
+                try:
+                    pattern, file_name = command[1].strip(), command[2].strip()
+                    results = self.file_manager.grep(pattern, file_name)
+                    for result in results:
+                        terminal.appendTerminalText(result)
+                except:
+                    terminal.appendTerminalText("Error: Please enter a valid file name.")
             else:
-                terminal.appendTerminalText("Error: Please specify a file ")
+                terminal.appendTerminalText("Error: Please specify a pattern and file name.")
+
 
         elif command[0] == "head":
             if len(command) > 1:
@@ -183,39 +186,24 @@ class CommandHandler:
                 terminal.appendTerminalText("Error: Please specify a link.")
 
         elif command[0] == "find":
-            if len(command) >= 2:
-                startpath = command[1]
-                name = None
-                type = None
+            # Set default values for name and type
+            name = None
+            type = None
 
-                if '-name' in command:
-                    try:
-                        name_index = command.index('-name')
-                        name = command[name_index + 1]
-                    except IndexError:
-                        terminal.appendTerminalText("Error: Please specify a name after -name flag.")
-                        return
+            # Check if the user provided a name and/or type argument
+            if len(command) > 1:
+                name = command[1]
+            if len(command) > 2:
+                type = command[2]
 
-                if '-type' in command:
-                    try:
-                        type_index = command.index('-type')
-                        type = command[type_index + 1]
-                        if type not in ['f', 'd']:
-                            terminal.appendTerminalText("Error: Invalid type. Use 'f' for files or 'd' for directories.")
-                            return
-                    except IndexError:
-                        terminal.appendTerminalText("Error: Please specify a type after -type flag.")
-                        return
+            # Call the find method of the file manager and print the results
+            try:
+                results = file_manager.find(name=name, type=type)
+                for result in results:
+                    terminal.appendTerminalText(result)
+            except Exception as e:
+                terminal.appendTerminalText(f"Error: {e}")
 
-                try:
-                    results = self.file_manager.find(startpath, name=name, type=type)
-                    for result in results:
-                        terminal.appendTerminalText(result)
-                except Exception as e:
-                    terminal.appendTerminalText(f"Error: {e}")
-
-            else:
-                terminal.appendTerminalText("Error: Please specify a start path.")
 
         elif command[0] == "echo":
             if len(command) > 1:
