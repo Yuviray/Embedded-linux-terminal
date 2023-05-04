@@ -1,6 +1,5 @@
 Make Directory
-1 Parameter
-The name of a directory
+1 Parameter - The name of a directory
 Creates directory with the given name
 "mkdir dir_name"
 "mk_dir dir_name" if dir_name is already used, nothing will happen

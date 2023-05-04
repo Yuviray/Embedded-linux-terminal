@@ -1,4 +1,5 @@
-show running processes
+Table of Processes
 0 Parameters
 It provides a dynamic real-time view of the running system
 "top"
+n/a

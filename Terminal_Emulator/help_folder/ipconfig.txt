@@ -1,4 +1,4 @@
-get Internet Protocol Configuration
+Internet Protocol Configuration
 0 Parameters
 displays 
 - TCP/IP network values

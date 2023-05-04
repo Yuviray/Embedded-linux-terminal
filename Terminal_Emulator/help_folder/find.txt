@@ -1,11 +1,6 @@
-find file or directory
-2 Parameters
-name of what your looking for
-the type of object your looking for
-
-"find game.py f"
-    - looks for a file 
-"find fonts d"
-    - looks for a directory 
-"find game.py"
-    - returns directories and files
+Find
+2 Parameters - Name of desired file/directory, The type of object being searched for
+Find file or directory
+"find game.py f" - looks for a file 
+"find fonts d" - looks for a directory 
+"find game.py" - returns directories and files

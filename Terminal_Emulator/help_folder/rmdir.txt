@@ -1,6 +1,5 @@
 Remove Directory
-1 Parameter
-The name of a directory
+1 Parameter - The name of a directory
 Deletes a directory with the given name
 "rmdir dir_name"
 "rmdir dir_name" only works if the dir_name is empty

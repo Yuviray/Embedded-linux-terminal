@@ -1,6 +1,5 @@
 Change Mode
-2 Parameters
-The new permission, the name of a file
+2 Parameters - The new permission, the name of a file
 Changes the current permission of the given file to the permission given
 "chmod 'permission' file_name"
 In "chmod 'permission' file_name", permission must be 'r', 'w', or 'x'

@@ -1,6 +1,5 @@
-Get network ping
-1 Parameter
-hostname/ip address
-displays 
-- test basic network connectivity 
+Packet Internet or Inter-Network Groper
+1 Parameter - hostname/ip address
+Displays test results for basic network connectivity 
 "ping example.com"
+n/a

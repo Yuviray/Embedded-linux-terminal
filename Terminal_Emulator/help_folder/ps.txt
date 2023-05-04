@@ -1,10 +1,5 @@
-Get running processes info
+Process
 0 Parameters
--lists information about all 
- running processes on the system,
- including the user who owns the
- process, the process ID (PID), 
- the percentage of CPU usage, 
- the percentage of memory usage, 
- and other details about the process.
+Displays information about running processes on the system
 "ps"
+Info for each process listed includes: the user who owns the process, the process ID (PID), the percentage of CPU usage, the percentage of memory usage, and other details about the process.

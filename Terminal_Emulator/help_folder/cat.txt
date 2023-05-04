@@ -1,6 +1,5 @@
 Concatenate
-1 Parameter
-Name of a file
+1 Parameter - Name of a file
 Creates a file with the given name
 "cat file_name"
 n/a

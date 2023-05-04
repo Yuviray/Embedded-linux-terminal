@@ -1,6 +1,5 @@
 Change Directory
-1 Parameter
-the name of a directory
+1 Parameter - the name of a directory
 changes the current directory to the specified directory
 "cd directory_name"
 "cd .." will make the parent directory the new current directory
