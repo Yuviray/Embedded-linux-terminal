@@ -76,24 +76,21 @@ class FileManagement:
 
     def list_files(self, startpath):
         text = "Directory Tree\n\n"
-        for root, dirs, files in os.walk(startpath):
-            dirs[:] = [d for d in dirs if not d.startswith('.')]
-            level = root.replace(startpath, '').count(os.sep)
-            indent = ' ' * 4 * (level)
-            text += '{}{}/\n'.format(indent, os.path.basename(root))
-            subindent = ' ' * 4 * (level + 1)
-            files = [f for f in files if not f.startswith('.')]
-            for f in files:
-                if not f.startswith('.'):
-                    text += '{}{}\n'.format(subindent, f)
+        files = os.listdir(os.getcwd())
+        text += os.getcwd()[2:] + '\n\n\n'
+        for file in files:
+            if not str(file).startswith('.'):
+                text += ("\t\t\t" + str(file) + "\n")
+        
         return text
 
     def df(self):
         total, used, free = shutil.disk_usage('/')
 
-        print("Filesystem      1K-blocks    Used      Available")
-        print(f"/               {total // 1024}      {used // 1024}      {free // 1024}")
-
+        text += ("Filesystem      1K-blocks    Used      Available")
+        text += ("/               {"+str(total // 1024)+"}      {"+str(used // 1024)+"}      {"+str(free // 1024)+"}")
+        return text
+    
     def find(self, name=None, type=None):
         startpath = os.getcwd()
         result = []

@@ -41,17 +41,17 @@ class CommandHandler:
                 try:
                     self.file_manager.cd(command[1])
                 except:
-                    terminal.appendTerminalText("Error: Please enter a valid path.")
+                    terminal.appendPrevText("Error: Please enter a valid path.")
             else:
-                terminal.appendTerminalText("Error: Please specify a path.")
+                terminal.appendPrevText("Error: Please specify a path.")
 
         elif command[0] == "ls":
             files = self.file_manager.ls()
             i = len(terminal.prev_lines)
             for file in files:
                 last_time = os.path.getmtime(file)
-                last_time_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(last_time))
-                terminal.appendTerminalText(last_time_str + "\t\t\t\t" + str(file))
+                last_time_str = time.strftime('|  %Y-%m-%d  |  %H:%M:%S  |', time.localtime(last_time))
+                terminal.appendPrevText(last_time_str + "\t\t\t\t" + str(file))
                 i += 1
 
         elif command[0] == "cat":
@@ -59,42 +59,42 @@ class CommandHandler:
                 try:
                     self.file_manager.cat(command[1])
                 except:
-                    terminal.appendTerminalText("Error: Please enter a valid file name.")
+                    terminal.appendPrevText("Error: Please enter a valid file name.")
 
             else:
-                terminal.appendTerminalText("Error: Please specify a file name.")
+                terminal.appendPrevText("Error: Please specify a file name.")
 
         elif command[0] == "mkdir":
             if len(command) == 2:
                 try:
                     self.file_manager.mkdir(command[1])
                 except:
-                    terminal.appendTerminalText("Error: Please enter a valid directory name.")
+                    terminal.appendPrevText("Error: Please enter a valid directory name.")
             else:
-                terminal.appendTerminalText("Error: Please specify a directory name.")
+                terminal.appendPrevText("Error: Please specify a directory name.")
 
         elif command[0] == "rm":
             if len(command) == 2:
                 try:
                     self.file_manager.rm(command[1])
                 except:
-                    terminal.appendTerminalText("Error: Please enter a valid file name.")
+                    terminal.appendPrevText("Error: Please enter a valid file name.")
 
             else:
-                terminal.appendTerminalText("Error: Please specify a file name.")
+                terminal.appendPrevText("Error: Please specify a file name.")
 
         elif command[0] == "rmdir":
             if len(command) == 2:
                 try:
                     self.file_manager.rmdir(command[1])
                 except:
-                    terminal.appendTerminalText("Error: Please enter a valid directory name.")
+                    terminal.appendPrevText("Error: Please enter a valid directory name.")
             else:
-                terminal.appendTerminalText("Error: Please specify a directory name.")
+                terminal.appendPrevText("Error: Please specify a directory name.")
 
         elif command[0] == "pwd":
             if len(command) > 1:
-                terminal.appendTerminalText("pwd: too many arguments")
+                terminal.appendPrevText("pwd: too many arguments")
             else:
                 self.file_manager.pwd()
 
@@ -104,10 +104,10 @@ class CommandHandler:
                     try:
                         self.file_manager.mv(command[1], command[2])
                     except:
-                        terminal.appendTerminalText("Error: Please enter a valid file name.")
+                        terminal.appendPrevText("Error: Please enter a valid file name.")
 
             else:
-                terminal.appendTerminalText("Error: Please specify a file source.")
+                terminal.appendPrevText("Error: Please specify a file source.")
 
         elif command[0] == "cp":
             if len(command) > 1:
@@ -115,20 +115,20 @@ class CommandHandler:
                     try:
                         self.file_manager.cp(command[1], command[2])
                     except:
-                        terminal.appendTerminalText("Error: Please enter a valid file name.")
+                        terminal.appendPrevText("Error: Please enter a valid file name.")
 
             else:
-                terminal.appendTerminalText("Error: Please specify a file source.")
+                terminal.appendPrevText("Error: Please specify a file source.")
 
         elif command[0] == "touch":
             if len(command) > 1:
                 try:
                     self.file_manager.touch(command[1])
                 except:
-                    terminal.appendTerminalText("Error: Please enter a valid file name.")
+                    terminal.appendPrevText("Error: Please enter a valid file name.")
 
             else:
-                terminal.appendTerminalText("Error: Please specify a file name.")
+                terminal.appendPrevText("Error: Please specify a file name.")
 
         elif command[0] == "chmod":
             if len(command) > 1:
@@ -137,10 +137,10 @@ class CommandHandler:
                         temp = self.file_manager.chmod(command[1], command[2])
                         terminal.appendTerminalText(temp)
                     except:
-                        terminal.appendTerminalText("Error: Please enter a valid file name.")
+                        terminal.appendPrevText("Error: Please enter a valid file name.")
 
             else:
-                terminal.appendTerminalText("Error: Please specify a file ")
+                terminal.appendPrevText("Error: Please specify a file ")
 
         elif command[0] == "grep":
             if len(command) > 1:
@@ -152,45 +152,42 @@ class CommandHandler:
                 except:
                     terminal.appendTerminalText("Error: Please enter a valid file name.")
             else:
-                terminal.appendTerminalText("Error: Please specify a pattern and file name.")
-
+                terminal.appendPrevText("Error: Please specify a file ")
 
         elif command[0] == "head":
             if len(command) > 1:
                 if len(command) > 2 :
                     try:
                         temp = self.file_manager.head(command[1], command[2])
-                        #terminal.appendTerminalText(temp)
+                        #terminal.appendPrevText(temp)
                     except:
-                        terminal.appendTerminalText("Error: Please enter a valid file name.")
+                        terminal.appendPrevText("Error: Please enter a valid file name.")
                 else:
                     try:
                         temp = self.file_manager.head(command[1], 10)
-                        #terminal.appendTerminalText(temp)
+                        #terminal.appendPrevText(temp)
                     except:
-                        terminal.appendTerminalText("Error: Please enter a valid file name.")
+                        terminal.appendPrevText("Error: Please enter a valid file name.")
             else:
-                terminal.appendTerminalText("Error: Please enter a valid file name.")
+                terminal.appendPrevText("Error: Please enter a valid file name.")
 
         elif command[0] == "df":
             temp = self.file_manager.df()
-            terminal.appendTerminalText(temp)
+            terminal.appendPrevText(temp)
 
         elif command[0] == "wget ":
             if len(command) > 1:
                 try:
                     self.file_manager.wget(command[1])
                 except:
-                    terminal.appendTerminalText("Error: Please enter a valid link")
+                    terminal.appendPrevText("Error: Please enter a valid link")
             else:
-                terminal.appendTerminalText("Error: Please specify a link.")
+                terminal.appendPrevText("Error: Please specify a link.")
 
         elif command[0] == "find":
-            # Set default values for name and type
             name = None
             type = None
 
-            # Check if the user provided a name and/or type argument
             if len(command) > 1:
                 name = command[1]
             if len(command) > 2:
@@ -204,49 +201,48 @@ class CommandHandler:
             except Exception as e:
                 terminal.appendTerminalText(f"Error: {e}")
 
-
         elif command[0] == "echo":
             if len(command) > 1:
                 text_to_echo = ' '.join(command[1:])
-                terminal.appendTerminalText(text_to_echo)
+                terminal.appendPrevText(text_to_echo)
             else:
-                terminal.appendTerminalText("Error: Please specify text to echo.")
+                terminal.appendPrevText("Error: Please specify text to echo.")
 
         elif command[0] == "date":
             current_date = self.file_manager.date()
-            terminal.appendTerminalText(current_date)
+            terminal.appendPrevText(current_date)
 
         elif command[0] == "whoami":
-            terminal.appendTerminalText(self.file_manager.whoami())
+            terminal.appendPrevText(self.file_manager.whoami())
 
         elif command[0] == "uname":
-            terminal.appendTerminalText(str(self.file_manager.uname()))
+            terminal.appendPrevText(str(self.file_manager.uname()))
 
         elif command[0] == "hostname":
-            terminal.appendTerminalText(self.file_manager.hostname())
+            terminal.appendPrevText(self.file_manager.hostname())
 
         elif command[0] == "ping":
             if len(command) == 2:
-                terminal.appendTerminalText(self.file_manager.ping(command[1]))
+                terminal.appendPrevText(self.file_manager.ping(command[1]))
             else:
-                terminal.appendTerminalText("Error: Please specify a host.")
+                terminal.appendPrevText("Error: Please specify a host.")
 
         elif command[0] == "ps":
             process_list = self.file_manager.ps()
             for process in process_list:
-                terminal.appendTerminalText(f"{process['pid']} {process['user']} {process['command']} {process['stat']} {process['start']}")
+                terminal.appendPrevText(f"{process['pid']} {process['user']} {process['command']} {process['stat']} {process['start']}")
 
         elif command[0] == "top":
             process_list = self.file_manager.top()
             for process in process_list:
-                terminal.appendTerminalText(f"{process['pid']} {process['username']} {process['name']} {process['cpu_percent']} {process['memory_percent']}")
+                terminal.appendPrevText(f"{process['pid']} {process['username']} {process['name']} {process['cpu_percent']} {process['memory_percent']}")
 
         elif command[0] == "ifconfig":
             interface_info = self.file_manager.ifconfig()
             for interface, addresses in interface_info.items():
-                terminal.appendTerminalText(f"{interface}:")
+                terminal.appendPrevText(f"{interface}:")
                 for address_info in addresses:
-                    terminal.appendTerminalText(f"    inet {address_info['address']} netmask {address_info['netmask']}")
+                    terminal.appendPrevText(f"    inet {address_info['address']} netmask {address_info['netmask']}")
 
     # ___________________________________________________
     # |Main Terminal Window               | working-    |
@@ -268,109 +264,33 @@ class Window:
         self.text_color = t_color
         self.font_size = font_sz
         self.line_spacing = self.font_size // 2
+        self.font_width = (self.font_size * 2) // 3
         self.font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', self.font_size)
         self.max_rows_of_text = self.height // (self.font.get_height() + self.line_spacing)
         self.text = ""
+        self.prev_lines = []
         self.next_y_for_print = 0
+        self.text_surface = self.font.render(self.text, True, self.text_color)
         self.surface = pygame.Surface((self.width, self.height))
-    
-    def setWidth(self, width):
-        self.panel_width = width
-    def setHeight(self, height):
-        self.panel_height = height
-    def setXcord(self, x_val):
-        self.x_cord = x_val
-    def setYcord(self, y_val):
-        self.y_cord = y_val
-    def setBackgroundColor(self, color):
-        self.background_color = color
-    def setTextColor(self, color):
-        self.text_color = color
-    def setFontSize(self, font_sz):
-        self.font_size = font_sz
-    def setFont(self, fon):
-        self.font = fon
-    def setText(self, tex):
-        self.text = tex
-    def setNextYforPrint(self, n_y):
-        self.next_y_for_print = n_y
-    def setSurface(self, surf):
-        self.surface = surf
 
-class ScrollBar():
-    def __init__(self, scroll_pos, wid, heit, x_val, y_val):
-        self.scroll_position = scroll_pos
-        self.width = wid
-        self.height = heit
-        self.x_cord = x_val
-        self.y_cord = y_val
-    
-    def setScrollPosition(self, pos):
-        self.scroll_position = pos
-    def setWidth(self, wid):
-        self.width = wid
-    def setHeight(self, heit):
-        self.height = heit
-    def setXcord(self, x_val):
-        self.x_cord = x_val
-    def setYcord(self, y_val):
-        self.y_cord = y_val
+    def appendPrevText(self, text_to_add):
+        self.prev_lines.append(text_to_add)
+        self.next_y_for_print = self.next_y_for_print + self.font.get_height() + self.line_spacing
 
-class DropDown:
-    def __init__(self, x, y, width, height, options, font_color, font_size, background_color, font_obj=None, callback=None, max_options=5):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.options = options
-        self.font_color = font_color
-        self.font_size = font_size
-        self.background_color = background_color
-        self.active_option = options[0]
-        self.is_active = False
-        self.font = font_obj if font_obj else pygame.font.Font(None, font_size)
-        self.option_rects = []
-        self.callback = callback
-        self.max_options = max_options
-        self.scroll_position = 0
-
-        self.main_rect = pygame.Rect(self.x, self.y, self.width, self.height)
-
-    def draw(self, window):
-        pygame.draw.rect(window, self.background_color, (self.x, self.y, self.width, self.height))
-        text = self.font.render(self.active_option, True, self.font_color)
-        window.blit(text, (self.x + 5, self.y + 5))
-
-        if self.is_active:
-            self.option_rects = []
-            for index, option in enumerate(self.options[self.scroll_position:self.scroll_position + self.max_options]):
-                pygame.draw.rect(window, self.background_color, (self.x, self.y + (index + 1) * self.height, self.width, self.height))
-                text = self.font.render(option, True, self.font_color)
-                window.blit(text, (self.x + 5, self.y + (index + 1) * self.height + 5))
-                self.option_rects.append(pygame.Rect(self.x, self.y + (index + 1) * self.height, self.width, self.height))
-
-    def handle_event(self, event):
-        if not self.is_active:
-            if self.main_rect.collidepoint(event.pos):
-                self.is_active = True
+    def DrawTextOnSurface(self, tex, x_cord, y_cord):
+        if len(tex) == 0:
+            return
+        elif tex[len(tex) - 1] == '\n':
+            tex = tex[:-1]
+        
+        if (len(tex) > self.width // self.font_width):
+            self.DrawTextOnSurface(tex[:self.width // self.font_width], x_cord, y_cord)
+            self.next_y_for_print += self.font.get_height() + self.line_spacing
+            self.DrawTextOnSurface(tex[self.width // self.font_width + 1: ], x_cord, y_cord + self.font.get_height() + self.line_spacing)
+            
         else:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 4:
-                    self.scroll_position = max(0, self.scroll_position - 1)
-                elif event.button == 5:
-                    self.scroll_position = min(len(self.options) - self.max_options, self.scroll_position + 1)
-                else:
-                    for index, rect in enumerate(self.option_rects):
-                        if rect.collidepoint(event.pos):
-                            self.active_option = self.options[self.scroll_position + index]
-                            if self.callback:
-                                self.callback(self.active_option)
-                            self.is_active = False
-                            break
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if not any(rect.collidepoint(event.pos) for rect in self.option_rects) and not self.main_rect.collidepoint(event.pos):
-                    self.is_active = False
-
+            self.text_surface = self.font.render(tex, True, self.text_color)
+            self.surface.blit(self.text_surface, (x_cord, y_cord))
 
 class Terminal(Window):
     def __init__(self):
@@ -389,16 +309,8 @@ class Terminal(Window):
         self.command_history = []
         self.path_history = []
         self.max_history_length = 50
-        self.prev_lines = []
-        self.max_prev_lines = 300
         self.history_index = 0
 
-    def setHistoryIndex(self, i):
-        self.history_index = i
-
-    def appendTerminalText(self, text_to_add):
-        self.prev_lines.append(text_to_add)
-        self.setNextYforPrint(self.next_y_for_print + self.font.get_height() + self.line_spacing)
 
 class TreeDiagram(Window):
     def __init__(self):
@@ -431,76 +343,18 @@ class SettingsOverlay(Window):
             anchors={'left': 'right', 'right': 'right', 'top': 'bottom', 'bottom': 'bottom'}
         )
 
-class HelpOverlay:
-    def __init__(self, tree, terminal, font, options):
-        self.width = tree.width
-        self.height = tree.height
-        self.background_color = pygame.Color(8,1,20)
-        self.surface = pygame.Surface((self.width, self.height))
-        self.surface.fill(self.background_color)
-        self.text_surface = pygame.Surface((self.width, self.height))
-
-        self.displayed_option = None
-        self.font = font
-        self.font_color = pygame.Color(255,255,255)
-        self.help_text = None
-        self.term = terminal
-        self.overlay = False  
-
-        self.dropdown = DropDown(925, 40, 350, 30, ['ls', 'cd', 'cat','cp','touch',
-                                                    'mkdir','mv','rm','rmdir',
-                                                    'chmod','pwd',
-                                                    'find','echo','date',
-                                                   'whoami','uname','hostname',
-                                                   'ping','ps', 'top', 'ipconfig'], (0, 0, 0), font.get_height(), (200, 200, 200), font_obj=font, callback=lambda option: self.display_text_file(option))
-
-    def display_text(self, content):
-        self.text_surface.fill(self.background_color)
-        text = self.font.render(content, True, self.font_color)
-        self.text_surface.blit(text, (10, 50))
-
-    def draw(self, window):
-        window.blit(self.surface, (0, 0))
-        window.blit(self.text_surface, (0, 0))
-        self.dropdown.draw(window)
-
-    def update(self, screen, help_overlay):
-        if self.help_text:
-            screen.blit(self.help_text, (self.term.width + 15, 80))
-        if help_overlay == 1:
-            self.dropdown.draw(screen)
-
-    def hide_text(self):
-        self.text_surface.fill
-
-    def display_text_file(self, option, max_line_length=40):
-        if self.displayed_option == option:
-            self.help_text = None
-            self.displayed_option = None
-        else:
-            file_path = f'help_folder/{option}.txt'
-            with open(file_path, 'r') as file:
-                content = file.read()
-
-            # Split the text into lines and chunks
-            lines = content.split('\n')
-            line_chunks = []
-            max_line_length = 42
-            for line in lines:
-                chunks = [line[i:i + max_line_length] for i in range(0, len(line), max_line_length)]
-                line_chunks.extend(chunks)
-
-            # Render the text onto the help surface with line breaks and maximum line length
-            self.help_text = pygame.Surface((self.width, self.height))
-            self.help_text.fill(self.background_color)
-            y = 10
-            for line in line_chunks:
-                text = self.font.render(line, True, self.font_color)
-                self.help_text.blit(text, (10, y))
-                y += self.font.get_height() + 5
-
-            self.displayed_option = option
-
+class HelpOverlay(Window):
+    def __init__(self):
+        super().__init__(400, 500, 900, 0, pygame.Color(25,25,65), pygame.Color(255,255,255), 16)
+        self.overlay = False
+        self.help_folder_path = str(file_manager.get_path_text())[:-2]+"\\help_folder\\"
+        self.commands_list = os.listdir(self.help_folder_path)
+        self.help_files = []
+        
+        for command in self.commands_list:
+            self.help_files.append(command[:-4])
+        
+        self.drop_down = DropDown(200, 50, 1000, 50, self.help_files, self.font_size, self.background_color, pygame.Color(128, 128, 128), self.text_color)
 
 class OptionsButtonsPanel(Window):
     def __init__(self):
@@ -512,6 +366,33 @@ class OptionsButtonsPanel(Window):
         self.help_button_rect = pygame.Rect(975, 525, 50, 50)
         self.help_image = pygame.transform.scale(pygame.image.load("img/help-button.png"), (50, 50))
 
+class ScrollBar():
+    def __init__(self, scroll_pos, wid, heit, x_val, y_val):
+        self.scroll_position = scroll_pos
+        self.width = wid
+        self.height = heit
+        self.x_cord = x_val
+        self.y_cord = y_val
+
+class DropDown():
+    def __init__(self, wid, button_heit, x_val, y_val, ops, font_sz, back_color, select_color, tex_color):
+        self.background_color = back_color
+        self.selected_color = select_color
+        self.text_color = tex_color
+        self.x_cord = x_val
+        self.y_cord = y_val
+        self.options = ops
+        self.width = wid
+        self.button_height = button_heit
+        self.height = len(self.options) * self.button_height
+        self.drop_down_open = False
+        self.input_box = pygame.Rect(self.x_cord, self.y_cord, self.width, self.button_height)
+        self.font_size = font_sz
+        self.font = pygame.font.Font('fonts/UbuntuMono-Regular.ttf', self.font_size)
+        self.selected_option = "Select an Option"
+        self.scroll_bar = ScrollBar(0, 20 ,35, self.width - 20, 0)
+        self.surface = pygame.Surface((self.width, self.height))
+
 
 def main():
     command_handler = CommandHandler()
@@ -521,9 +402,9 @@ def main():
     terminal = Terminal()
     tree = TreeDiagram()
     settings = SettingsOverlay()
+    helper = HelpOverlay()
    
     options = OptionsButtonsPanel()
-    helper = HelpOverlay(tree, terminal, terminal.font, options)
 
     # Define screen variables
     screen_width = terminal.width + tree.width
@@ -548,7 +429,7 @@ def main():
 
             # If user clicks down
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                # If the user clicked on the input box
+                # If the user clicked on any of the input boxes
                 if terminal.input_box.collidepoint(event.pos):
                     terminal.active = True
                 else:
@@ -559,24 +440,20 @@ def main():
                 else:
                     tree.active = False
 
-                # If the user clicked on settings button and the settings aren't up yet
-                if options.settings_button_rect.collidepoint(event.pos) and not settings.overlay:
-                    settings.overlay = True
+                if helper.drop_down.input_box.collidepoint(event.pos):
+                    helper.drop_down.drop_down_open = not helper.drop_down.drop_down_open    
 
-                # If the user clicked on settings button while settings are up
-                elif options.settings_button_rect.collidepoint(event.pos) and settings.overlay:
-                    settings.overlay = False
+                # If the user clicked on settings button
+                elif options.settings_button_rect.collidepoint(event.pos):
+                    settings.overlay = not settings.overlay
                     
-                # If the user clicked on the help button and the help window isn't up yet
-                if options.help_button_rect.collidepoint(event.pos) and not helper.overlay:
-                    helper.overlay = True
+                # If the user clicked on the help button
+                elif options.help_button_rect.collidepoint(event.pos):
+                    helper.overlay = not helper.overlay
 
                 # If the user clicked on help window button while help window is up
                 elif options.help_button_rect.collidepoint(event.pos) and helper.overlay:
                     helper.overlay = False
-                    
-                if helper.overlay:
-                    helper.dropdown.handle_event(event)
 
                 elif event.button == 4 and len(terminal.prev_lines) > terminal.max_rows_of_text and terminal.active:
                     terminal.scroll_bar.scroll_position = max(0, terminal.scroll_bar.scroll_position - 1)
@@ -584,11 +461,24 @@ def main():
                 elif event.button == 5 and len(terminal.prev_lines) > terminal.max_rows_of_text and terminal.active:
                     terminal.scroll_bar.scroll_position = min(len(terminal.prev_lines) - terminal.max_rows_of_text + 1, terminal.scroll_bar.scroll_position + 1)
 
-                elif event.button == 4 and len(directory_manager.directory_lines) > tree.max_rows_of_text and tree.active:
+                elif event.button == 4 and len(tree.prev_lines) > tree.max_rows_of_text and tree.active:
                     tree.scroll_bar.scroll_position = max(0, tree.scroll_bar.scroll_position - 1)
                 
-                elif event.button == 5 and len(directory_manager.directory_lines) > tree.max_rows_of_text and tree.active:
-                    tree.scroll_bar.scroll_position = min(len(directory_manager.directory_lines) - tree.max_rows_of_text + 1, tree.scroll_bar.scroll_position + 1)
+                elif event.button == 5 and len(tree.prev_lines) > tree.max_rows_of_text and tree.active:
+                    tree.scroll_bar.scroll_position = min(len(tree.prev_lines) - tree.max_rows_of_text + 1, tree.scroll_bar.scroll_position + 1)
+
+                elif event.button == 4 and helper.drop_down.drop_down_open:
+                    helper.drop_down.scroll_bar.scroll_position = max(0, helper.drop_down.scroll_bar.scroll_position - 1)
+             
+                elif event.button == 5 and helper.drop_down.drop_down_open:
+                    helper.drop_down.scroll_bar.scroll_position = min(len(helper.drop_down.options) - 9, helper.drop_down.scroll_bar.scroll_position + 1)                
+
+                elif event.button != 4 and event.button != 5 and helper.drop_down.drop_down_open:
+                    for i in range(helper.drop_down.scroll_bar.scroll_position + 1, min(len(helper.drop_down.options), helper.drop_down.scroll_bar.scroll_position + helper.max_rows_of_text)):
+                        option_rect = pygame.Rect(helper.drop_down.x_cord, (i - helper.drop_down.scroll_bar.scroll_position + 1) * helper.drop_down.button_height, helper.drop_down.width, helper.drop_down.button_height)
+                        if option_rect.collidepoint(event.pos):
+                            helper.drop_down.selected_option = helper.drop_down.options[i]
+                            helper.drop_down.drop_down_open = False
 
             # If the user entered a key
             elif event.type == pygame.KEYDOWN:
@@ -599,7 +489,7 @@ def main():
                     # If user hits 'enter' key
                     if event.key == pygame.K_RETURN:
                         # Update command history
-                        terminal.appendTerminalText(current_path + terminal.text)
+                        terminal.appendPrevText(current_path + terminal.text)
 
                         terminal.command_history.append(terminal.text)
                         terminal.path_history.append(current_path)
@@ -611,40 +501,37 @@ def main():
                             terminal.command_history.pop(0)
                             terminal.path_history.pop(0)
                         
-                        terminal.setHistoryIndex(len(terminal.command_history))
-
-                        if len(terminal.prev_lines) > terminal.max_prev_lines:
-                            terminal.prev_lines.pop(0)
+                        terminal.history_index = len(terminal.command_history)
 
                         # Reset user input and go to next line
-                        terminal.setText("")
+                        terminal.text = ""
 
                         if len(terminal.prev_lines) > terminal.max_rows_of_text:
                             terminal.scroll_bar.scroll_position = (len(terminal.prev_lines) - terminal.max_rows_of_text) + 1
 
                     # If user hits 'backspace' key
                     elif event.key == pygame.K_BACKSPACE:
-                        terminal.setText(terminal.text[:-1])
+                        terminal.text = terminal.text[:-1]
 
                     # If user hits the up arrow
                     elif event.key == pygame.K_UP:
                         # Cycle to older commands
                         if terminal.history_index > 0:
-                            terminal.setHistoryIndex(terminal.history_index - 1)
-                            terminal.setText(terminal.command_history[terminal.history_index])
+                            terminal.history_index = terminal.history_index - 1
+                            terminal.text = terminal.command_history[terminal.history_index]
                             current_path = terminal.path_history[terminal.history_index]
 
                     # If user hits the down arrow
                     elif event.key == pygame.K_DOWN:
                         # Cycle to newer commands
                         if terminal.history_index < len(terminal.command_history) - 1:
-                            terminal.setHistoryIndex(terminal.history_index + 1)
-                            terminal.setText(terminal.command_history[terminal.history_index])
+                            terminal.history_index = terminal.history_index + 1
+                            terminal.text = terminal.command_history[terminal.history_index]
                             current_path = terminal.path_history[terminal.history_index]
 
                     # Else: add key to end of user input
                     else:
-                        terminal.setText(terminal.text + event.unicode)
+                        terminal.text = terminal.text + event.unicode
 
 
             # If user clicks the button to edit background color
@@ -656,7 +543,7 @@ def main():
                                                 initial_colour=terminal.background_color)
                 
                 if event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED:
-                    terminal.setBackgroundColor(event.colour)
+                    terminal.background_color = event.colour
 
             # If user clicks the button to edit text color
             elif event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == settings.text_color_picker_button:
@@ -667,7 +554,7 @@ def main():
                                                 initial_colour=terminal.text_color)
                 
                 if event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED:
-                    terminal.setTextColor(event.colour)
+                    terminal.text_color = event.colour
 
             # If user exits out of color menu
             elif event.type == pygame_gui.UI_WINDOW_CLOSE:
@@ -698,14 +585,45 @@ def main():
             settings.ui_manager.update(time_delta)
             settings.ui_manager.draw_ui(screen)
             
-        elif helper.overlay == 1:
-            # Draw menu overlay
+        elif helper.overlay:
             settings.background_color_picker_button.disable()
             settings.text_color_picker_button.disable()
             helper.surface.fill(helper.background_color)
-            screen.blit(helper.surface, (terminal.width, 0))
-            helper.update(screen, helper.overlay)
-        
+
+            screen.blit(helper.surface, (terminal.width, 0))  
+
+            selected_option_text = helper.drop_down.font.render(helper.drop_down.selected_option, True, helper.drop_down.text_color)
+            screen.blit(selected_option_text, (helper.drop_down.x_cord + 10, helper.drop_down.y_cord + 10))
+
+            if helper.drop_down.selected_option != "Select an Option":
+                helper.prev_lines = []
+                helper.next_y_for_print = 95
+                f = open("help_folder/" + str(helper.drop_down.selected_option) + ".txt", "r")
+                for line in f.readlines():
+                    helper.next_y_for_print += helper.font.get_height() + helper.line_spacing
+                    helper.DrawTextOnSurface(str(line), 10, helper.next_y_for_print)
+                    screen.blit(helper.surface, (terminal.width, 0))
+
+            if helper.drop_down.drop_down_open:
+                if helper.drop_down.selected_option:
+                    selected_option_text = helper.drop_down.font.render(helper.drop_down.selected_option, True, helper.drop_down.text_color)
+                    screen.blit(selected_option_text, (helper.drop_down.x_cord + 10, helper.drop_down.y_cord + 10))
+                
+                screen.blit(helper.drop_down.surface, (terminal.width + 100, 50)) 
+
+                for i in range(helper.drop_down.scroll_bar.scroll_position + 1, min(len(helper.drop_down.options), helper.drop_down.scroll_bar.scroll_position + helper.max_rows_of_text)):
+                    option_rect = pygame.Rect(helper.drop_down.x_cord, (i - helper.drop_down.scroll_bar.scroll_position + 1) * helper.drop_down.button_height, helper.drop_down.width, helper.drop_down.button_height)
+                    pygame.draw.rect(screen, helper.drop_down.selected_color, option_rect)
+                    option_text = helper.drop_down.font.render(helper.drop_down.options[i], True, helper.drop_down.text_color)
+                    screen.blit(option_text, (helper.drop_down.x_cord + 10, (i - helper.drop_down.scroll_bar.scroll_position + 1) * helper.drop_down.button_height + 10))
+
+                selected_option_text = helper.drop_down.font.render(helper.drop_down.selected_option, True, helper.drop_down.text_color)
+            
+            pygame.draw.rect(screen, helper.drop_down.selected_color, helper.drop_down.input_box)
+            pygame.draw.polygon(screen, helper.drop_down.background_color, [(helper.drop_down.x_cord + helper.drop_down.width - 30, helper.drop_down.y_cord + 15), (helper.drop_down.x_cord + helper.drop_down.width - 20, helper.drop_down.y_cord + 15), (helper.drop_down.x_cord + helper.drop_down.width - 25, helper.drop_down.y_cord + 25)])
+                
+            screen.blit(selected_option_text, (helper.drop_down.x_cord + 10, helper.drop_down.y_cord + 10))
+
         else:
             # Get current directory information
             settings.background_color_picker_button.disable()
@@ -713,25 +631,25 @@ def main():
             tree.surface.fill(tree.background_color)
 
             # Draw working tree scroll bar if nec. 
-            if (len(directory_manager.directory_lines) > tree.max_rows_of_text):
-                tree.scroll_bar.setYcord(int(tree.height*((tree.scroll_bar.scroll_position) / (len(directory_manager.directory_lines) - tree.max_rows_of_text))))
-                if (tree.scroll_bar.scroll_position == (len(directory_manager.directory_lines) - tree.max_rows_of_text)):
-                    tree.scroll_bar.setYcord(tree.height - tree.scroll_bar.height)
+            if (len(tree.prev_lines) > tree.max_rows_of_text):
+                tree.scroll_bar.y_cord = int(tree.height*((tree.scroll_bar.scroll_position) / (len(tree.prev_lines) - tree.max_rows_of_text)))
+                if (tree.scroll_bar.scroll_position == (len(tree.prev_lines) - tree.max_rows_of_text)):
+                    tree.scroll_bar.y_cord = tree.height - tree.scroll_bar.height
                 pygame.draw.rect(tree.surface, (20, 120, 220), (tree.scroll_bar.x_cord, tree.scroll_bar.y_cord, tree.scroll_bar.width, tree.scroll_bar.height))
             #updates directory tree
             directory_manager.update_directory_lines()
+            tree.prev_lines = directory_manager.directory_lines
 
-            for i in range(tree.scroll_bar.scroll_position, min(len(directory_manager.directory_lines), tree.scroll_bar.scroll_position + tree.max_rows_of_text)):
+            for i in range(tree.scroll_bar.scroll_position, min(len(tree.prev_lines), tree.scroll_bar.scroll_position + tree.max_rows_of_text)):
                 #tree.setText()
-                tree_text = options.font.render(directory_manager.directory_lines[i], True, tree.text_color)
-                tree.setNextYforPrint((i - tree.scroll_bar.scroll_position) * (tree.font.get_height() + tree.line_spacing))
-                tree.surface.blit(tree_text, (10, tree.next_y_for_print))
-
+                tree.next_y_for_print = (i - tree.scroll_bar.scroll_position) * (tree.font.get_height() + tree.line_spacing)
+                tree.DrawTextOnSurface(tree.prev_lines[i], 10, tree.next_y_for_print)
+ 
             # Draw current directory
             screen.blit(tree.surface, (terminal.width, 0))
             settings.ui_manager.update(time_delta)
+        
         # Get Terminal Ready to be drawn
-
         # Fill in the terminal background
         terminal.surface.fill(terminal.background_color)
 
@@ -740,35 +658,21 @@ def main():
 
         # Draw Terminal Scroll bar
         if (len(terminal.prev_lines) > terminal.max_rows_of_text):
-            terminal.scroll_bar.setYcord(int(terminal.height*((terminal.scroll_bar.scroll_position) / (len(terminal.prev_lines) - terminal.max_rows_of_text))))
+            terminal.scroll_bar.y_cord = int(terminal.height*((terminal.scroll_bar.scroll_position) / (len(terminal.prev_lines) - terminal.max_rows_of_text)))
             if (terminal.scroll_bar.scroll_position == (len(terminal.prev_lines) - terminal.max_rows_of_text)):
-                terminal.scroll_bar.setYcord(terminal.height - terminal.scroll_bar.height)
+                terminal.scroll_bar.y_cord = (terminal.height - terminal.scroll_bar.height)
             pygame.draw.rect(terminal.surface, (20, 120, 220), (terminal.scroll_bar.x_cord, terminal.scroll_bar.y_cord, terminal.scroll_bar.width, terminal.scroll_bar.height))
 
-        # Draw the current text
-        text_surface = terminal.font.render(current_path + terminal.text, True, terminal.text_color)
-        
         if len(terminal.prev_lines) == 0:
-            terminal.surface.blit(text_surface, (10, 0))
-
-        ########## TODO: FIX BUG WITH SCROLL HERE!!!
-
-        elif len(terminal.prev_lines) > terminal.max_rows_of_text:
-            for i in range(terminal.scroll_bar.scroll_position, min(len(terminal.prev_lines), terminal.scroll_bar.scroll_position + terminal.max_rows_of_text)):
-                previous_surface = terminal.font.render(terminal.prev_lines[i], True, terminal.text_color)
-                terminal.setNextYforPrint((i - terminal.scroll_bar.scroll_position) * (terminal.font.get_height() + terminal.line_spacing))
-                terminal.surface.blit(previous_surface, (10, terminal.next_y_for_print))
-            
-            terminal.surface.blit(text_surface, (10, terminal.next_y_for_print + terminal.font.get_height() + terminal.line_spacing))
+            terminal.DrawTextOnSurface(current_path + terminal.text, 10, 0)
 
         else:
             # Draw the previous commands
             for i in range(terminal.scroll_bar.scroll_position, min(len(terminal.prev_lines), terminal.scroll_bar.scroll_position + terminal.max_rows_of_text)):
-                previous_surface = terminal.font.render(terminal.prev_lines[i], True, terminal.text_color)
-                terminal.setNextYforPrint((i - terminal.scroll_bar.scroll_position) * (terminal.font.get_height() + terminal.line_spacing))
-                terminal.surface.blit(previous_surface, (10, terminal.next_y_for_print))
-            
-            terminal.surface.blit(text_surface, (10, terminal.next_y_for_print + terminal.font.get_height() + terminal.line_spacing))
+                terminal.next_y_for_print = ((i - terminal.scroll_bar.scroll_position) * (terminal.font.get_height() + terminal.line_spacing))
+                terminal.DrawTextOnSurface(terminal.prev_lines[i], 10, terminal.next_y_for_print)
+
+            terminal.DrawTextOnSurface(current_path + terminal.text, 10, terminal.next_y_for_print + terminal.font.get_height() + terminal.line_spacing)
 
         # If the user has clicked onto the terminal
         if terminal.active:
@@ -778,8 +682,9 @@ def main():
                 terminal.cursor_visible = not terminal.cursor_visible
 
             # Draw Cursor
+            # Bug: Cursor remains on screen after scrolling up
             if terminal.cursor_visible:
-                terminal.cursor_pos = text_surface.get_width() + terminal.line_spacing
+                terminal.cursor_pos = terminal.text_surface.get_width() + terminal.line_spacing
                 
                 if len(terminal.prev_lines) == 0:
                     terminal.surface.blit(terminal.cursor_surface, (terminal.cursor_pos, terminal.next_y_for_print))
