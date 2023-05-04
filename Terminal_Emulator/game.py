@@ -286,7 +286,7 @@ class Window:
         if (len(tex) > self.width // self.font_width):
             self.DrawTextOnSurface(tex[:self.width // self.font_width], x_cord, y_cord)
             self.next_y_for_print += self.font.get_height() + self.line_spacing
-            self.DrawTextOnSurface(tex[self.width // self.font_width + 1: ], x_cord, y_cord + self.font.get_height() + self.line_spacing)
+            self.DrawTextOnSurface(tex[self.width // self.font_width: ], x_cord, y_cord + self.font.get_height() + self.line_spacing)
             
         else:
             self.text_surface = self.font.render(tex, True, self.text_color)
