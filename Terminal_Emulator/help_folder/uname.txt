@@ -1,7 +1,5 @@
-Get system information
+Unix-Name
 0 Parameters
-Displays information on
-- Operating system
-- hardware
-- kernal
+Displays information on Operating system, hardware, kernal
 "uname"
+n/a

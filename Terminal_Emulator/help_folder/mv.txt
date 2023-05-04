@@ -1,6 +1,5 @@
 Move
-2 Parameters
-The source of a file, and the name of a destination directory
+2 Parameters - The source of a file, and the name of a destination directory
 Moves a file to the given destination
 "mv file_source new_dir_name"
 In "mv file_source new_dir_name", file_source is a path 

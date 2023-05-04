@@ -1,4 +1,5 @@
-Get date
+Date
 0 Parameters
-displays the date
+Displays today's date
 "date"
+n/a

@@ -1,4 +1,5 @@
-Show username
+Who am I?
 0 Parameters
-displays username of user
+Displays username of user
 "whoami"
+n/a

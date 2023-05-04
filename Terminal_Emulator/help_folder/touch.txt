@@ -1,6 +1,5 @@
 Touch
-1 Parameter
-The name of a file
+1 Parameter - The name of a file
 Creates a file with the given name, or edits the timestamp of the given file
 "touch file_name"
 "touch file_name" only creates file_name, if file_name DNE

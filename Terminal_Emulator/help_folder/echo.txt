@@ -1,4 +1,5 @@
-echo Command
-1 Parameters
-displays anthing in parameter to consol
-"echo hi"
+Echo
+1 Parameters - Message to display to console
+Displays some message to console
+"echo "some_message""
+n/a
