@@ -1,7 +1,4 @@
-echo Command:
-    - two arguments
-        - echo Command
-        - " " any input
-- displays 2nd argument to terminal
--example
-    - echo hi
+echo Command
+1 Parameters
+displays anthing in parameter to consol
+"echo hi"

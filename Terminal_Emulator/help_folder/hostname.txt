@@ -1,2 +1,4 @@
-hostname Command:
-- displays hostname of current system
+Hostname
+0 Parameters
+displays hostname of current system
+"hostname"

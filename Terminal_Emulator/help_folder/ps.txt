@@ -1,4 +1,5 @@
-ps Command:
+Get running processes info
+0 Parameters
 -lists information about all 
  running processes on the system,
  including the user who owns the
@@ -6,3 +7,4 @@ ps Command:
  the percentage of CPU usage, 
  the percentage of memory usage, 
  and other details about the process.
+"ps"
