@@ -13,7 +13,10 @@ In addition to this, the application will be able to fast track some processes a
 efficiency for all users.
 ### Setup
 1. Download github
-2. Cd Terminal_Emulator
-3. run game.py for main application
-4. run unit_tests.py for unit tests
+2. Install libraries if need on your system
+  - pygame
+  - pygame.gui
+4. Cd Terminal_Emulator
+5. run game.py for main application
+6. run unit_tests.py for unit tests
 
