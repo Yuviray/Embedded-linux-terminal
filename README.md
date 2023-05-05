@@ -20,3 +20,5 @@ efficiency for all users.
 5. run game.py for main application
 6. run unit_tests.py for unit tests
 
+### Structural description
+The main program is run from the game.py file. At program start a gui pops up that has the main terminal window on the left and center of the screen. To the right of the screen is the dragram tree window. In the code all of the windows are classes that inherent from one main window class. The main function in game.py is where most of the events are handled such as clicking and input. When a user enters a command in the terminal, they are accessing a class called CommandHandler where the user input is parsed and read. The CommandHandler will then call a function from the FileManagement class that stores all of our linux commands. The FileManagement class is in a separte file called functions.py. After calling the command the CommandHandler class will then display the output to the tereminal window. The directory window will display the current working directory and all its contents. Underneath the directory tree window is the Buttons that show the setting and help menu. These 
